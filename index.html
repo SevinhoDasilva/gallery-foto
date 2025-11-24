@@ -1,180 +1,603 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Sevinho Dasilva — VinnGallery</title>
 
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
+  <!-- Swiper for portfolio slider -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+  <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+
+  <!-- Three.js for galaxy -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
   <style>
+    :root{
+      --bg-dark: #030410;
+      --indigo-600: #6366f1;
+      --muted: #bfc3ff;
+    }
+    html { scroll-behavior: smooth; }
     body {
       font-family: "Poppins", sans-serif;
+      margin: 0;
       background: radial-gradient(circle at 20% 20%, #06071a, #03040d 70%);
       color: #d5d8e9;
       overflow-x: hidden;
     }
-    html { scroll-behavior: smooth; }
 
-    /* ===== Neon Glow ===== */
-    .neon { text-shadow: 0 0 15px #4f46e5, 0 0 30px #4338ca; }
-
-    /* ===== Header Typing Effect ===== */
-    .typing::after {
-      content: "|";
-      animation: cursorBlink 0.6s infinite;
-    }
-    @keyframes cursorBlink { 50% { opacity: 0; } }
-
-    /* ===== Masonry Gallery ===== */
-    .masonry { column-count: 1; column-gap: 1rem; }
-    @media (min-width: 640px) { .masonry { column-count: 2; } }
-    @media (min-width: 768px) { .masonry { column-count: 3; } }
-    @media (min-width: 1024px) { .masonry { column-count: 4; } }
-
-    .masonry img {
-      width: 100%;
-      border-radius: 14px;
-      margin-bottom: 1rem;
-      background: #0a0a10;
-      cursor: pointer;
-      transition: 0.35s ease;
-    }
-    .masonry img:hover {
-      transform: scale(1.06) rotate(1deg);
-      box-shadow: 0 0 20px #6366f1, 0 0 35px #4f46e5;
-    }
-
-    /* ===== Lightbox ===== */
-    #lightbox {
-      display: none;
+    /* Canvas galaxy background */
+    #galaxy-bg {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      backdrop-filter: blur(4px);
-    }
-    #lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 12px;
-      box-shadow: 0 0 25px #6366f1;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -20;
+      pointer-events: none;
     }
 
-    .lightbox-btn {
-      position: absolute;
-      top: 50%;
-      font-size: 2.8rem;
-      color: #bfc3ff;
-      cursor: pointer;
-      user-select: none;
-      transition: 0.3s;
+    /* Loading holo */
+    #loading-screen {
+      position: fixed; inset:0;
+      display:flex; flex-direction:column; gap:1rem;
+      align-items:center; justify-content:center;
+      background: rgba(2,3,10,0.95);
+      z-index: 99999;
     }
-    .lightbox-btn:hover {
-      color: white;
-      text-shadow: 0 0 20px #6366f1;
+    .holo-ring { width:80px; height:80px; border-radius:50%; border:4px solid rgba(99,102,241,0.12); border-top:4px solid var(--indigo-600); animation:spin 1s linear infinite; box-shadow:0 0 18px rgba(99,102,241,0.2); }
+    @keyframes spin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+    /* Navbar */
+    nav { position:fixed; top:0; left:0; right:0; z-index:60; backdrop-filter: blur(6px); background: linear-gradient(180deg, rgba(9,10,20,0.35), rgba(9,10,20,0.12)); border-bottom:1px solid rgba(99,102,241,0.06); }
+    nav ul { display:flex; gap:1.25rem; align-items:center; justify-content:center; padding:0.9rem 1rem; margin:0; list-style:none; }
+    nav a { color: #cbd5ff; font-weight:600; text-decoration:none; padding:0.25rem 0.5rem; border-radius:6px; }
+    nav a:hover { color: white; box-shadow: 0 0 10px rgba(99,102,241,0.12); }
+
+    /* Header */
+    header { padding-top:88px; text-align:center; padding-bottom:18px; }
+    .neon { text-shadow: 0 0 10px #4f46e5, 0 0 26px #4338ca; color:#e6e9ff; }
+    .typing::after { content:" |"; animation: blink 0.6s infinite; }
+    @keyframes blink { 50%{ opacity:0 } }
+
+    /* Masonry gallery */
+    .masonry { column-gap:1rem; column-count:1; padding:1.25rem; max-width:1200px; margin:0 auto; }
+    @media(min-width:640px){ .masonry{ column-count:2 } }
+    @media(min-width:768px){ .masonry{ column-count:3 } }
+    @media(min-width:1024px){ .masonry{ column-count:4 } }
+    .masonry figure { break-inside:avoid; margin:0 0 1rem; position:relative; overflow:hidden; border-radius:14px; }
+    .masonry img { width:100%; display:block; border-radius:14px; transition:transform .35s ease, box-shadow .35s ease; background:#0a0a10; }
+    .masonry figure:hover img { transform:scale(1.05) rotate(0.5deg); box-shadow: 0 0 22px rgba(99,102,241,0.18); }
+
+    /* caption overlay */
+    .caption {
+      position:absolute; left:8px; right:8px; bottom:8px; padding:8px 10px; border-radius:10px;
+      background: linear-gradient(180deg, rgba(7,9,20,0.15), rgba(5,6,12,0.45));
+      backdrop-filter: blur(6px); color:var(--muted); display:flex; justify-content:space-between; gap:10px; align-items:center;
     }
-    #prev { left: 4%; }
-    #next { right: 4%; }
+    .caption .meta { text-align:left; font-size:13px; opacity:0.9; }
+    .caption .actions { display:flex; gap:8px; align-items:center; }
+
+    /* Lightbox */
+    #lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:80; background: rgba(2,3,10,0.9); }
+    #lightbox img { max-width:92%; max-height:88%; border-radius:12px; box-shadow: 0 0 40px rgba(99,102,241,0.25); }
+    .lb-btn { position:absolute; top:50%; transform:translateY(-50%); font-size:2.8rem; color:#cbd5ff; cursor:pointer; user-select:none; padding:8px; }
+    #lb-prev{ left:3% } #lb-next{ right:3% } .lb-close{ top:6%; right:4%; position:absolute; font-size:1.5rem; cursor:pointer; }
+
+    /* Controls bar */
+    .controls { position:fixed; left:12px; bottom:12px; z-index:70; display:flex; gap:10px; align-items:center; background: rgba(6,7,12,0.45); border-radius:999px; padding:8px; backdrop-filter:blur(6px); }
+    .controls button { background:transparent; border:0; color:var(--muted); font-weight:600; padding:6px 10px; border-radius:999px; cursor:pointer; }
+    .controls button:hover { color:white; box-shadow: 0 0 12px rgba(99,102,241,0.12); }
+
+    /* Stats */
+    .stats { display:flex; gap:18px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
+    .stat { background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(67,56,202,0.04)); padding:12px 18px; border-radius:12px; min-width:120px; text-align:center; }
+
+    /* Footer & misc */
+    footer { text-align:center; padding:22px 12px; color:rgba(189,197,255,0.7); }
+    .dark-mode { --bg-dark: #f6f7fb; color: #081022; } /* toggled via JS */
+
+    /* Tilt / parallax header */
+    .header-wrap { perspective:1200px; display:inline-block; }
+    .tilt { transform-style:preserve-3d; transition: transform .12s ease; display:inline-block; padding:12px 18px; border-radius:12px; }
+
+    /* Guestbook */
+    .guestbook { max-width:720px; margin:0 auto; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:16px; border-radius:12px; box-shadow: 0 6px 20px rgba(2,3,10,0.5); }
+
+    /* small screens tweak */
+    @media(max-width:420px){ .controls{ left:8px; bottom:8px } nav ul{ gap:10px; font-size:14px } }
   </style>
 </head>
 
 <body>
 
-  <!-- LOADING -->
-  <div id="loading-screen" class="fixed top-0 left-0 w-full h-full flex flex-col gap-5 items-center justify-center bg-[#02030a] z-[99999]">
-    <div class="w-20 h-20 border-4 rounded-full border-indigo-500 border-t-transparent animate-spin"></div>
-    <p class="text-indigo-300 tracking-[4px] text-lg">Loading VinnDev...</p>
-  </div>
+  <!-- GALAXY CANVAS -->
+  <canvas id="galaxy-bg"></canvas>
 
-  <!-- LIGHTBOX -->
-  <div id="lightbox">
-    <span id="prev" class="lightbox-btn">&#10094;</span>
-    <img id="lightbox-img" />
-    <span id="next" class="lightbox-btn">&#10095;</span>
+  <!-- LOADING -->
+  <div id="loading-screen">
+    <div class="holo-ring"></div>
+    <div style="color:var(--muted); letter-spacing:3px">LOADING VinnDev...</div>
   </div>
 
   <!-- NAVBAR -->
-  <nav class="fixed top-0 left-0 w-full py-4 z-50 bg-indigo-900/20 backdrop-blur-lg border-b border-indigo-700/40">
-    <ul class="flex justify-center gap-12 font-semibold">
-      <li class="neon text-indigo-300">VinnDev</li>
-      <li><a href="#gallery" class="hover:text-indigo-300">Gallery</a></li>
-      <li><a href="#about" class="hover:text-indigo-300">About</a></li>
-      <li><a href="#contact" class="hover:text-indigo-300">Contact</a></li>
+  <nav>
+    <ul>
+      <li class="neon font-bold">VinnDev</li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#guestbook">Guestbook</a></li>
+      <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
   <!-- HEADER -->
-  <header class="text-center py-32">
-    <h1 class="text-6xl font-extrabold neon">Sevinho Dasilva</h1>
-    <p id="typing" class="typing text-indigo-300 mt-4 text-xl opacity-80"></p>
+  <header class="mt-6 text-center">
+    <div class="header-wrap">
+      <div id="tilt" class="tilt">
+        <h1 class="neon text-5xl font-extrabold">Sevinho Dasilva</h1>
+        <p id="typing" class="text-indigo-300 mt-2 font-medium"></p>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="stats mt-6">
+      <div class="stat">
+        <div id="count-photos" class="text-3xl font-bold">0</div>
+        <div class="text-xs opacity-80">Foto</div>
+      </div>
+      <div class="stat">
+        <div id="count-projects" class="text-3xl font-bold">0</div>
+        <div class="text-xs opacity-80">Projects</div>
+      </div>
+      <div class="stat">
+        <div id="count-followers" class="text-3xl font-bold">0</div>
+        <div class="text-xs opacity-80">Followers</div>
+      </div>
+    </div>
   </header>
 
-  <!-- GALLERY -->
-  <section id="gallery" class="p-6 masonry">
-    <img src="DSC07189.JPG" alt="Foto 1" />
-    <img src="IMG-20250923-WA0030.jpg" alt="Foto 2" />
+  <!-- Controls: music, mode -->
+  <div class="controls">
+    <button id="play-sound">Play Music</button>
+    <button id="mute-sfx">Mute SFX</button>
+    <button id="toggle-theme">Toggle Light</button>
+  </div>
+
+  <!-- GALLERY (masonry) -->
+  <section id="gallery" class="masonry mt-6">
+    <!-- NOTE: letakkan foto di assets/images/ atau ganti src sesuai nama file -->
+    <figure data-title="City Neon" data-loc="Jakarta, 2025" data-desc="Low-light street photo.">
+      <img loading="lazy" src="assets/images/DSC07189.JPG" alt="Foto 1" />
+      <figcaption class="caption">
+        <div class="meta"><strong>City Neon</strong><div style="font-size:11px; opacity:0.85">Jakarta — Low-light</div></div>
+        <div class="actions">
+          <button class="btn-download" title="Download" data-fname="DSC07189.jpg">↓</button>
+          <button class="btn-share" title="Share">⤴</button>
+        </div>
+      </figcaption>
+    </figure>
+
+    <figure data-title="Golden Hour" data-loc="Bali, 2024" data-desc="Sunset portrait">
+      <img loading="lazy" src="assets/images/IMG-20250923-WA0030.jpg" alt="Foto 2" />
+      <figcaption class="caption">
+        <div class="meta"><strong>Golden Hour</strong><div style="font-size:11px; opacity:0.85">Bali — Sunset</div></div>
+        <div class="actions">
+          <button class="btn-download" data-fname="IMG-20250923-WA0030.jpg">↓</button>
+          <button class="btn-share">⤴</button>
+        </div>
+      </figcaption>
+    </figure>
+
+    <!-- contoh tambahan, ganti / tambahkan foto sesuai kebutuhan -->
+    <!-- <figure> <img src="assets/images/photo3.jpg" ...> ... </figure> -->
   </section>
 
-  <!-- ABOUT -->
-  <section id="about" class="max-w-3xl mx-auto text-center p-10">
-    <h2 class="text-4xl font-bold mb-4 neon text-indigo-300">Tentang Saya</h2>
-    <p class="opacity-80 leading-relaxed text-lg">
-      Saya membuat gallery ini untuk menampilkan foto terbaik & momen paling keren
-      dalam perjalanan saya. Semua foto di website ini adalah karya pribadi dan menjadi bagian dari perjalanan saya sebagai fotografer & kreator digital.
-    </p>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact" class="text-center p-10">
-    <h2 class="text-4xl font-bold mb-4 neon text-indigo-300">Kontak</h2>
-    <p class="mb-6 opacity-80">Hubungi saya melalui sosial berikut:</p>
-
-    <div class="flex justify-center gap-6 text-lg">
-      <a href="mailto:vinvin140107@gmail.com" class="hover:text-indigo-400 underline">Email</a>
-      <a href="https://wa.me/628xxxx" class="hover:text-indigo-400 underline">WhatsApp</a>
-      <a href="https://instagram.com/yourusername" class="hover:text-indigo-400 underline">Instagram</a>
+  <!-- PORTFOLIO SLIDER -->
+  <section id="portfolio" class="max-w-4xl mx-auto p-6">
+    <h2 class="text-2xl neon font-bold mb-4">Portfolio Highlight</h2>
+    <div class="swiper mySwiper" style="--swiper-navigation-color: #fff;">
+      <div class="swiper-wrapper">
+        <!-- each slide -->
+        <div class="swiper-slide">
+          <img src="assets/images/DSC07189.JPG" alt="slide1" class="w-full rounded-lg"/>
+          <p class="mt-2 text-sm opacity-80">City Neon — Jakarta (2025)</p>
+        </div>
+        <div class="swiper-slide">
+          <img src="assets/images/IMG-20250923-WA0030.jpg" alt="slide2" class="w-full rounded-lg"/>
+          <p class="mt-2 text-sm opacity-80">Golden Hour — Bali (2024)</p>
+        </div>
+      </div>
+      <!-- navigation -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-pagination"></div>
     </div>
   </section>
 
+  <!-- ABOUT -->
+  <section id="about" class="max-w-3xl mx-auto text-center p-6">
+    <h2 class="text-3xl neon font-bold mb-3">Tentang Saya</h2>
+    <p class="opacity-80 leading-relaxed text-lg">
+      Halloo semuanya! Saya adalah Fotografer dan Developer pemula yang berfokus pada fotografi sinematik dan dokumentasi momen sehari-hari. Saya menyukai eksplorasi cahaya rendah (low-light), street photography, dan editing warna bergaya neon/cinematic. Selain memotret, saya juga membangun pengalaman web untuk menampilkan karya saya secara interaktif. VinnGallery hadir sebagai ruang untuk berbagi, berkolaborasi, dan berkembang bersama komunitas kreatif.
+    </p>
+  </section>
+
+  <!-- GUESTBOOK -->
+  <section id="guestbook" class="p-6">
+    <h2 class="text-2xl neon font-bold mb-4 text-center">Guestbook</h2>
+    <div class="guestbook">
+      <form id="guest-form" class="flex flex-col gap-3 mb-4">
+        <input id="g-name" placeholder="Nama" class="p-2 rounded-md bg-transparent border border-indigo-700/30" required />
+        <textarea id="g-msg" placeholder="Tulis pesan..." rows="3" class="p-2 rounded-md bg-transparent border border-indigo-700/30" required></textarea>
+        <div class="flex gap-2">
+          <button type="submit" class="px-4 py-2 rounded-md bg-indigo-600">Kirim</button>
+          <button id="clear-guest" type="button" class="px-4 py-2 rounded-md border border-indigo-600">Kosongkan</button>
+        </div>
+      </form>
+      <div id="guest-list" class="flex flex-col gap-3"></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="max-w-3xl mx-auto text-center p-6">
+    <h2 class="text-2xl neon font-bold mb-3">Kontak</h2>
+    <p class="opacity-80">Email: <a href="mailto:vinvin140107@gmail.com" class="underline">vinvin140107@gmail.com</a></p>
+    <p class="opacity-80">WhatsApp: <a href="https://wa.me/6285224943832" target="_blank" class="underline">085224943832</a></p>
+    <p class="opacity-80">Instagram: <a href="https://instagram.com/vinn.dasilva_" target="_blank" class="underline">@vinn.dasilva_</a></p>
+  </section>
+
   <!-- FOOTER -->
-  <footer class="text-center text-indigo-400 py-8 opacity-70">
-    &copy; 2025 VinnDev — VinnGallery
+  <footer class="mt-8">
+    <div class="opacity-70">&copy; 2025 Sevinho Dasilva — VinnGallery</div>
   </footer>
 
+  <!-- LIGHTBOX -->
+  <div id="lightbox">
+    <div class="lb-close" id="lb-close">✕</div>
+    <span id="lb-prev" class="lb-btn">‹</span>
+    <img id="lb-img" src="" alt="lightbox"/>
+    <span id="lb-next" class="lb-btn">›</span>
+  </div>
+
+  <!-- Audio (replace path with your own file in assets/sound/ambient.mp3) -->
+  <audio id="ambient-audio" loop preload="metadata">
+    <source src="assets/sound/ambient.mp3" type="audio/mpeg" />
+    <!-- if no local file, browser will ignore -->
+  </audio>
+
+  <!-- SCRIPTS -->
   <script>
-    /* Loading Effect */
-    setTimeout(() => {
-      document.getElementById("loading-screen").style.display = "none";
-    }, 1500);
+    /* ============================
+       UTIL: Safe query & helpers
+       ============================ */
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => Array.from(document.querySelectorAll(s));
 
-    /* Typing Animation */
-    const typing = document.getElementById("typing");
+    /* ============================
+       LOADING SCREEN
+       ============================ */
+    window.addEventListener('load', () => {
+      const L = document.getElementById('loading-screen');
+      L.style.transition = 'opacity .5s ease';
+      L.style.opacity = 0;
+      setTimeout(() => L && L.remove(), 600);
+    });
+
+    /* ============================
+       Typing effect words
+       ============================ */
+    const typing = $('#typing');
     const words = ["Content Creator", "Photographer", "Developer", "Digital Artist"];
-    let idx = 0, char = 0, deleting = false;
-    setInterval(() => {
-      typing.innerText = words[idx].substring(0, char);
-      char += deleting ? -1 : 1;
-      if (char === words[idx].length) deleting = true;
-      if (char === 0 && deleting) { deleting = false; idx = (idx + 1) % words.length; }
-    }, 120);
+    let wi=0, ci=0, del=false;
+    setInterval(()=> {
+      const w = words[wi];
+      typing.textContent = w.slice(0, ci);
+      if(!del) ci++; else ci--;
+      if(ci === w.length+1) del=true;
+      if(ci === 0 && del){ del=false; wi=(wi+1)%words.length; }
+    }, 110);
 
-    /* Lightbox Gallery */
-    const images = Array.from(document.querySelectorAll(".masonry img"));
-    let current = 0;
-    const light = document.getElementById("lightbox");
-    const lightImg = document.getElementById("lightbox-img");
+    /* ============================
+       Tilt parallax header
+       ============================ */
+    (function tilt() {
+      const el = document.getElementById('tilt');
+      if(!el) return;
+      document.addEventListener('mousemove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width/2;
+        const cy = rect.top + rect.height/2;
+        const dx = (e.clientX - cx)/rect.width;
+        const dy = (e.clientY - cy)/rect.height;
+        const rx = dy * 6;
+        const ry = dx * -12;
+        el.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateZ(8px)`;
+      });
+      document.addEventListener('mouseleave', ()=> el.style.transform = '');
+    })();
 
-    const open = (i) => { current = i; lightImg.src = images[i].src; light.style.display = "flex"; };
-    images.forEach((img, i) => img.addEventListener("click", () => open(i)));
-    document.getElementById("prev").onclick = () => open((current - 1 + images.length) % images.length);
-    document.getElementById("next").onclick = () => open((current + 1) % images.length);
-    light.addEventListener("click", (e) => e.target === light && (light.style.display = "none"));
+    /* ============================
+       Swiper portfolio init
+       ============================ */
+    const swiper = new Swiper(".mySwiper", {
+      loop: true,
+      slidesPerView: 1,
+      spaceBetween: 18,
+      navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+      pagination: { el: ".swiper-pagination", clickable: true },
+      autoplay: { delay: 4500, disableOnInteraction: false },
+    });
+
+    /* ============================
+       Lightbox + gallery interactions
+       ============================ */
+    let images = $$('.masonry figure img');
+    const lightbox = $('#lightbox');
+    const lbImg = $('#lb-img');
+    let curIndex = 0;
+
+    function openLightbox(i){
+      const img = images[i];
+      lbImg.src = img.src;
+      lightbox.style.display = 'flex';
+      curIndex = i;
+    }
+    images.forEach((img, idx) => img.addEventListener('click', () => openLightbox(idx)));
+    $('#lb-close').addEventListener('click', ()=> lightbox.style.display='none');
+    $('#lb-prev').addEventListener('click', ()=> openLightbox((curIndex - 1 + images.length) % images.length));
+    $('#lb-next').addEventListener('click', ()=> openLightbox((curIndex + 1) % images.length));
+    lightbox.addEventListener('click', (e)=> { if(e.target === lightbox) lightbox.style.display='none'; });
+
+    /* ============================
+       Download with watermark (client-side)
+       ============================ */
+    function downloadWithWatermark(imgSrc, fname, watermarkText="Sevinho Dasilva"){
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imgSrc;
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img,0,0);
+        // watermark styling
+        const size = Math.round(c.width * 0.03);
+        ctx.font = `${size}px Poppins, sans-serif`;
+        ctx.fillStyle = "rgba(255,255,255,0.85)";
+        ctx.strokeStyle = "rgba(0,0,0,0.5)";
+        ctx.lineWidth = Math.max(2, Math.round(size*0.12));
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        const text = watermarkText;
+        ctx.strokeText(text, c.width - 12, c.height - 12);
+        ctx.fillText(text, c.width - 12, c.height - 12);
+        // create link
+        const a = document.createElement('a');
+        a.href = c.toDataURL('image/jpeg', 0.92);
+        a.download = fname || 'photo.jpg';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      };
+      img.onerror = ()=> alert('Gagal memproses gambar untuk didownload. Pastikan gambar berada di server yang sama atau CORS diizinkan.');
+    }
+
+    $$('.btn-download').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const figure = e.target.closest('figure');
+        const src = figure.querySelector('img').src;
+        const fname = btn.dataset.fname || 'photo.jpg';
+        // sound
+        playClick();
+        downloadWithWatermark(src, fname, "Sevinho Dasilva");
+      });
+    });
+
+    /* ============================
+       Share button (navigator.share fallback)
+       ============================ */
+    $$('.btn-share').forEach(btn => {
+      btn.addEventListener('click', (e)=> {
+        const fig = e.target.closest('figure');
+        const title = fig.dataset.title || 'Foto';
+        const src = fig.querySelector('img').src;
+        if(navigator.share){
+          navigator.share({ title, url: src }).catch(()=>{});
+        } else {
+          // fallback: copy link
+          navigator.clipboard.writeText(src).then(()=> alert('Link foto disalin ke clipboard!'));
+        }
+      });
+    });
+
+    /* ============================
+       Sound: ambient + click SFX
+       ============================ */
+    const ambient = $('#ambient-audio');
+    const playBtn = $('#play-sound');
+    const muteSfxBtn = $('#mute-sfx');
+    let sfxMuted = false;
+    function playClick(){ if(!sfxMuted){ const a=new Audio(); a.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA="; a.volume=0.12; a.play().catch(()=>{}); } }
+    playBtn.addEventListener('click', ()=>{
+      if(ambient.paused){ ambient.play().catch(()=>{}); playBtn.textContent='Pause Music'; } else { ambient.pause(); playBtn.textContent='Play Music'; }
+    });
+    muteSfxBtn.addEventListener('click', ()=> { sfxMuted = !sfxMuted; muteSfxBtn.textContent = sfxMuted ? 'Unmute SFX' : 'Mute SFX'; });
+
+    /* ============================
+       Theme toggle (dark/light)
+       ============================ */
+    const themeBtn = $('#toggle-theme');
+    let lightMode = false;
+    themeBtn.addEventListener('click', ()=> {
+      lightMode = !lightMode;
+      document.body.style.background = lightMode ? 'linear-gradient(180deg,#f6f7fb,#e9ecff)' : 'radial-gradient(circle at 20% 20%, #06071a, #03040d 70%)';
+      document.body.style.color = lightMode ? '#081022' : '#d5d8e9';
+      themeBtn.textContent = lightMode ? 'Toggle Dark' : 'Toggle Light';
+      playClick();
+    });
+
+    /* ============================
+       Count-up stats
+       ============================ */
+    function countUp(el, target, duration=1200){
+      const start = 0; const range = target - start; const startTime = performance.now();
+      function step(now){
+        const t = Math.min(1, (now - startTime)/duration);
+        el.textContent = Math.floor(start + range * t);
+        if(t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    // assume numbers derived from gallery items
+    const totalPhotos = $$('.masonry figure').length;
+    countUp($('#count-photos'), totalPhotos, 900);
+    countUp($('#count-projects'), 7, 900);
+    countUp($('#count-followers'), 1240, 1000);
+
+    /* ============================
+       Guestbook (localStorage)
+       ============================ */
+    const gform = $('#guest-form');
+    const glist = $('#guest-list');
+    function renderGuests(){
+      const guests = JSON.parse(localStorage.getItem('vin_guest')||'[]');
+      glist.innerHTML = guests.reverse().map(g => `<div class="p-3 rounded-md" style="background:rgba(255,255,255,0.02)"><div class="font-semibold">${escapeHtml(g.name)}</div><div class="text-sm opacity-80">${escapeHtml(g.msg)}</div><div class="text-xs opacity-60 mt-1">${new Date(g.t).toLocaleString()}</div></div>`).join('');
+    }
+    function escapeHtml(s){ return (''+s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+    gform.addEventListener('submit', (e)=> {
+      e.preventDefault();
+      const name = $('#g-name').value.trim();
+      const msg = $('#g-msg').value.trim();
+      if(!name || !msg) return;
+      const guests = JSON.parse(localStorage.getItem('vin_guest')||'[]');
+      guests.push({name, msg, t: Date.now()});
+      localStorage.setItem('vin_guest', JSON.stringify(guests));
+      $('#g-name').value=''; $('#g-msg').value='';
+      renderGuests();
+      playClick();
+    });
+    $('#clear-guest').addEventListener('click', ()=> {
+      if(confirm('Kosongkan semua pesan guestbook?')){ localStorage.removeItem('vin_guest'); renderGuests(); }
+    });
+    renderGuests();
+
+    /* ============================
+       Scroll reveal premium
+       ============================ */
+    (function scrollReveal(){
+      const items = document.querySelectorAll('section, header, footer, .masonry figure');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if(e.isIntersecting) { e.target.style.opacity = 1; e.target.style.transform = 'translateY(0)'; e.target.style.transition = 'all .8s cubic-bezier(.2,.9,.2,1)'; io.unobserve(e.target); }
+        });
+      }, { threshold: 0.08 });
+      items.forEach(it => { it.style.opacity = 0; it.style.transform = 'translateY(10px)'; io.observe(it); });
+    })();
+
+    /* ============================
+       Warp transition between anchors
+       ============================ */
+    (function warpLinks(){
+      document.querySelectorAll('a[href^="#"]').forEach(a=>{
+        a.addEventListener('click', (e)=>{
+          const target = document.querySelector(a.getAttribute('href'));
+          if(!target) return;
+          e.preventDefault();
+          // warp effect: scale + fade
+          document.body.style.transition = 'transform .45s ease, opacity .45s ease';
+          document.body.style.transform = 'scale(.995)';
+          document.body.style.opacity = 0.85;
+          setTimeout(()=> {
+            target.scrollIntoView({behavior:'smooth', block:'start'});
+            document.body.style.transform = '';
+            document.body.style.opacity = '';
+          }, 350);
+        });
+      });
+    })();
+
+    /* ============================
+       Galaxy 3D + Nebula (Three.js)
+       ============================ */
+    (function galaxy(){
+      const canvas = document.getElementById('galaxy-bg');
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 2000);
+      camera.position.z = 200;
+
+      // stars
+      const starsGeom = new THREE.BufferGeometry();
+      const starCount = 1800;
+      const positions = new Float32Array(starCount*3);
+      const sizes = new Float32Array(starCount);
+      for(let i=0;i<starCount;i++){
+        const r = Math.random()*1200 - 600;
+        positions[i*3] = (Math.random()-0.5)*2000;
+        positions[i*3+1] = (Math.random()-0.5)*1000;
+        positions[i*3+2] = (Math.random()-0.5)*2000;
+        sizes[i] = Math.random()*1.2 + 0.2;
+      }
+      starsGeom.setAttribute('position', new THREE.BufferAttribute(positions,3));
+      starsGeom.setAttribute('size', new THREE.BufferAttribute(sizes,1));
+      const starsMat = new THREE.PointsMaterial({ color:0x9aa8ff, size:1.2, sizeAttenuation:true, transparent:true });
+      const starPoints = new THREE.Points(starsGeom, starsMat);
+      scene.add(starPoints);
+
+      // nebula: soft sprite planes with additive blending
+      const loader = new THREE.TextureLoader();
+      loader.crossOrigin = '';
+      loader.load('https://raw.githubusercontent.com/limhenry/space-assets/main/nebula.png', (tex)=>{
+        for(let i=0;i<6;i++){
+          const m = new THREE.SpriteMaterial({ map: tex, blending: THREE.AdditiveBlending, opacity: 0.28 });
+          const s = new THREE.Sprite(m);
+          s.scale.set(900,600,1);
+          s.position.set((Math.random()-0.5)*800, (Math.random()-0.5)*400, -400 - i*120);
+          s.rotation.set(Math.random()*2, Math.random()*2, Math.random()*2);
+          scene.add(s);
+        }
+      }, undefined, ()=>{ /* ignore error if not loaded */ });
+
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+      function onResize(){
+        renderer.setSize(innerWidth, innerHeight);
+        camera.aspect = innerWidth/innerHeight;
+        camera.updateProjectionMatrix();
+      }
+      onResize();
+      window.addEventListener('resize', onResize);
+
+      let t = 0;
+      function animate(){
+        requestAnimationFrame(animate);
+        t += 0.002;
+        starPoints.rotation.y += 0.0008;
+        starPoints.rotation.x = Math.sin(t)*0.002;
+        // parallax based on scroll
+        const sc = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+        camera.position.x = (sc - 0.5) * 60;
+        camera.position.y = Math.sin(t)*10;
+        renderer.render(scene, camera);
+      }
+      animate();
+    })();
+
+    /* ============================
+       Small helper: keyboard navigation for lightbox
+       ============================ */
+    document.addEventListener('keydown', (e)=>{
+      if(lightbox.style.display==='flex'){
+        if(e.key === 'Escape') lightbox.style.display='none';
+        if(e.key === 'ArrowLeft') $('#lb-prev').click();
+        if(e.key === 'ArrowRight') $('#lb-next').click();
+      }
+    });
   </script>
-
 </body>
 </html>
