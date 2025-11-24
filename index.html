@@ -1,148 +1,109 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Sevinho Dasilva — VinnGallery</title>
+
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
-  <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <style>
-    :root{ --bg-dark:#030410; --indigo:#6366f1; --muted:#bfc3ff; }
-    html{ scroll-behavior:smooth }
-    body{ font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; margin:0; background:radial-gradient(circle at 20% 20%, #06071a, #03040d 70%); color:#d5d8e9; }
-    #galaxy-bg{ position:fixed; inset:0; width:100%; height:100%; z-index:-20; pointer-events:none }
-    #loading-screen{ position:fixed; inset:0; display:flex; flex-direction:column; gap:1rem; align-items:center; justify-content:center; background:rgba(2,3,10,0.95); z-index:9999 }
-    .holo-ring{ width:80px; height:80px; border-radius:50%; border:4px solid rgba(99,102,241,0.12); border-top:4px solid var(--indigo); animation:spin 1s linear infinite; box-shadow:0 0 18px rgba(99,102,241,0.2) }
-    @keyframes spin{ to{ transform:rotate(360deg) } }
-    nav{ position:fixed; top:0; left:0; right:0; z-index:60; backdrop-filter:blur(6px); background:linear-gradient(180deg, rgba(9,10,20,0.35), rgba(9,10,20,0.12)); border-bottom:1px solid rgba(99,102,241,0.06) }
-    nav ul{ display:flex; gap:1.25rem; align-items:center; justify-content:center; padding:.9rem 1rem; margin:0; list-style:none }
-    nav a, nav .brand{ color:#cbd5ff; font-weight:600; text-decoration:none }
-    header{ padding-top:88px; text-align:center; padding-bottom:18px }
-    .neon{ text-shadow:0 0 10px #4f46e5, 0 0 26px #4338ca; color:#e6e9ff }
-    .masonry{ column-gap:1rem; column-count:1; padding:1.25rem; max-width:1200px; margin:0 auto }
-    @media(min-width:640px){ .masonry{ column-count:2 } }
-    @media(min-width:768px){ .masonry{ column-count:3 } }
-    @media(min-width:1024px){ .masonry{ column-count:4 } }
-    .masonry figure{ break-inside:avoid; margin:0 0 1rem; position:relative; overflow:hidden; border-radius:14px }
-    .masonry img{ width:100%; display:block; border-radius:14px; transition:transform .35s ease, box-shadow .35s ease; background:#0a0a10 }
-    .masonry figure:hover img{ transform:scale(1.05) rotate(0.35deg); box-shadow:0 0 22px rgba(99,102,241,0.18) }
-    .caption{ position:absolute; left:8px; right:8px; bottom:8px; padding:8px 10px; border-radius:10px; background:linear-gradient(180deg, rgba(7,9,20,0.15), rgba(5,6,12,0.45)); backdrop-filter:blur(6px); color:var(--muted); display:flex; justify-content:space-between; gap:10px; align-items:center }
-    #lightbox{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:80; background:rgba(2,3,10,0.9) }
-    #lightbox img{ max-width:92%; max-height:88%; border-radius:12px; box-shadow:0 0 40px rgba(99,102,241,0.25) }
-    .lb-btn{ position:absolute; top:50%; transform:translateY(-50%); font-size:2.6rem; color:#cbd5ff; cursor:pointer; user-select:none; padding:8px }
-    #lb-prev{ left:3% } #lb-next{ right:3% }
-    .lb-close{ top:6%; right:4%; position:absolute; font-size:1.2rem; cursor:pointer }
-    .controls{ position:fixed; left:12px; bottom:12px; z-index:70; display:flex; gap:10px; align-items:center; background:rgba(6,7,12,0.45); border-radius:999px; padding:8px; backdrop-filter:blur(6px) }
-    .controls button{ background:transparent; border:0; color:var(--muted); font-weight:600; padding:6px 10px; border-radius:999px; cursor:pointer }
-    .controls button:hover{ color:white; box-shadow:0 0 12px rgba(99,102,241,0.12) }
-    .stats{ display:flex; gap:18px; justify-content:center; margin-top:12px; flex-wrap:wrap }
-    .stat{ background:linear-gradient(135deg, rgba(99,102,241,0.08), rgba(67,56,202,0.04)); padding:12px 18px; border-radius:12px; min-width:120px; text-align:center }
-    footer{ text-align:center; padding:22px 12px; color:rgba(189,197,255,0.7) }
-    @media(max-width:420px){ .controls{ left:8px; bottom:8px } nav ul{ gap:10px; font-size:14px } }
-    button:focus{ outline:2px dashed var(--indigo); outline-offset:3px }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 </head>
-<body>
-<canvas id="galaxy-bg" aria-hidden="true"></canvas>  
-<div id="loading-screen" role="status" aria-live="polite">
-  <div class="holo-ring" aria-hidden="true"></div>
-  <div style="color:var(--muted); letter-spacing:3px">LOADING VinnDev...</div>
-</div>  
-
-<nav>
-  <ul>
-    <li class="brand neon font-bold" aria-hidden="false">VinnDev</li>
-    <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>  
-
-<header class="mt-6 text-center">
-  <div class="header-wrap">
-    <div id="tilt" class="tilt">
-      <h1 class="neon text-5xl font-extrabold">Sevinho Dasilva</h1>
-      <p id="typing" class="text-indigo-300 mt-2 font-medium" aria-live="polite"></p>
-    </div>
-  </div>
-  <div class="stats mt-6" aria-hidden="false">
-    <div class="stat">
-      <div id="count-photos" class="text-3xl font-bold">0</div>
-      <div class="text-xs opacity-80">Foto</div>
-    </div>
-    <div class="stat">
-      <div id="count-projects" class="text-3xl font-bold">0</div>
-      <div class="text-xs opacity-80">Projects</div>
-    </div>
-    <div class="stat">
-      <div id="count-followers" class="text-3xl font-bold">0</div>
-      <div class="text-xs opacity-80">Followers</div>
-    </div>
-  </div>
-</header>  
-
-<div class="controls" aria-hidden="false">
-  <button id="play-sound" aria-pressed="false">Play Music</button>
-  <button id="mute-sfx">Mute SFX</button>
-  <button id="toggle-theme">Toggle Light</button>
-</div>  
+<body class="bg-black text-white font-poppins">
 
 <main>
-<section id="gallery" class="masonry mt-6" aria-label="Gallery">
-  <figure data-title="City Neon" data-loc="Guntur, 2025" data-desc="Low-light street photo">
-    <img loading="lazy" src="DSC07189.JPG" alt="Golden Hour - Gunung Guntur" />
-    <figcaption class="caption">
-      <div class="meta"><strong>Golden Hour</strong><div style="font-size:11px; opacity:0.85">Gunung Guntur</div></div>
-      <div class="actions">
-        <button class="btn-download" title="Download" data-fname="DSC07189.JPG">↓</button>
-        <button class="btn-share" title="Share photo">⤴</button>
-      </div>
-    </figcaption>
-  </figure>
-  <figure data-title="Golden Hour" data-loc="ITG, 2025" data-desc="Sunset portrait">
-    <img loading="lazy" src="IMG-20250923-WA0030.jpg" alt="Cikajang Style" />
-    <figcaption class="caption">
-      <div class="meta"><strong>Cikajang Style</strong><div style="font-size:11px; opacity:0.85">Just Style</div></div>
-      <div class="actions">
-        <button class="btn-download" data-fname="IMG-20250923-WA0030.jpg">↓</button>
-        <button class="btn-share" title="Share photo">⤴</button>
-      </div>
-    </figcaption>
-  </figure>
-</section>
-
-<section id="about" class="max-w-3xl mx-auto text-center p-6">
-  <h2 class="text-3xl neon font-bold mb-3">Tentang Saya</h2>
-  <p class="opacity-80 leading-relaxed text-lg">Halloo semuanya! Saya adalah Mahasiswa Teknik Informatika di Institut Teknologi Garut, saya juga adalah Fotografer dan Developer pemula yang berfokus pada fotografi sinematik dan dokumentasi momen sehari-hari. Saya menyukai eksplorasi cahaya rendah (low-light), street photography, dan editing warna bergaya neon/cinematic. Selain memotret, saya juga membangun pengalaman web untuk menampilkan karya saya secara interaktif. VinnGallery hadir sebagai ruang untuk berbagi, berkolaborasi, dan berkembang bersama komunitas kreatif.</p>
-</section>
-
-  <!-- 🔥🔥 BIODATA (DITAMBAHKAN DI SINI – TIDAK MERUSAK TAMPILAN) --> 
-  <section id="biodata" class="max-w-3xl mx-auto text-center p-6 mt-10"> <h2 class="text-3xl neon font-bold mb-4">Biodata</h2> 
-    <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg text-left"> <ul class="space-y-3 text-lg">
-      <li><strong class="text-indigo-400">Nama Lengkap:</strong> Sevinho Dasilva</li> 
-      <li><strong class="text-indigo-400">Nama Panggilan:</strong> Vino</li>
-      <li><strong class="text-indigo-400">Tempat, Tanggal Lahir:</strong> Garut, 14 Januari 2007</li>
-      <li><strong class="text-indigo-400">Alamat:</strong> Asrama Yonif 303 SSM</li> <li><strong class="text-indigo-400">Hobi:</strong> Bermain Alat Musik dan Olah raga</li>
-    </ul> 
-    </div> 
+  <!-- Photo section sebelumnya -->
+  <section id="gallery" class="max-w-5xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <figure class="relative group cursor-pointer">
+      <img src="assets/images/IMG-20250923-WA0030.jpg" alt="Photo 1" class="rounded-xl w-full h-60 object-cover">
+      <figcaption class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+        <button class="btn-download text-white font-bold" data-fname="IMG-20250923-WA0030.jpg">↓</button>
+        <button class="btn-share text-white font-bold ml-2" title="Share photo">⤴</button>
+      </figcaption>
+    </figure>
+    <figure class="relative group cursor-pointer">
+      <img src="assets/images/DSC07189.JPG" alt="Photo 2" class="rounded-xl w-full h-60 object-cover">
+      <figcaption class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+        <button class="btn-download text-white font-bold" data-fname="DSC07189.JPG">↓</button>
+        <button class="btn-share text-white font-bold ml-2" title="Share photo">⤴</button>
+      </figcaption>
+    </figure>
   </section>
 
-<section id="contact" class="max-w-3xl mx-auto text-center p-6">
-  <h2 class="text-2xl neon font-bold mb-3">Kontak</h2>
-  <p class="opacity-80">Email: <a href="mailto:vinvin140107@gmail.com" class="underline">vinvin140107@gmail.com</a></p>
-  <p class="opacity-80">WhatsApp: <a href="https://wa.me/6285224943832" target="_blank" rel="noopener noreferrer" class="underline">085224943832</a></p>
-  <p class="opacity-80">Instagram: <a href="https://instagram.com/vinn.dasilva_" target="blank" rel="noopener noreferrer" class="underline">@vinn.dasilva</a></p>
-</section>
-</main>
+  <!-- About section -->
+  <section id="about" class="max-w-3xl mx-auto text-center p-6">
+    <h2 class="text-3xl neon font-bold mb-3">Tentang Saya</h2>
+    <p class="opacity-80 leading-relaxed text-lg">
+      Halloo semuanya! Saya adalah Mahasiswa Teknik Informatika di Institut Teknologi Garut, saya juga adalah Fotografer dan Developer pemula yang berfokus pada fotografi sinematik dan dokumentasi momen sehari-hari. Saya menyukai eksplorasi cahaya rendah (low-light), street photography, dan editing warna bergaya neon/cinematic. Selain memotret, saya juga membangun pengalaman web untuk menampilkan karya saya secara interaktif. VinnGallery hadir sebagai ruang untuk berbagi, berkolaborasi, dan berkembang bersama komunitas kreatif.
+    </p>
+  </section>
 
+  <!-- Biodata section -->
+  <section id="biodata" class="max-w-3xl mx-auto text-center p-6 mt-10">
+    <h2 class="text-3xl neon font-bold mb-4">Biodata</h2>
+    <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg text-left">
+      <ul class="space-y-3 text-lg">
+        <li><strong class="text-indigo-400">Nama Lengkap:</strong> Sevinho Dasilva</li>
+        <li><strong class="text-indigo-400">Nama Panggilan:</strong> Vino</li>
+        <li><strong class="text-indigo-400">Tempat, Tanggal Lahir:</strong> Garut, 14 Januari 2007</li>
+        <li><strong class="text-indigo-400">Alamat:</strong> Asrama Yonif 303 SSM</li>
+        <li><strong class="text-indigo-400">Hobi:</strong> Bermain Alat Musik dan Olahraga</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 🔥 Projects, Photos, Followers Section -->
+  <section id="projects" class="max-w-3xl mx-auto text-center p-6 mt-10">
+    <h2 class="text-3xl neon font-bold mb-4">Projects</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-4 shadow-lg">
+        <h3 class="text-xl font-semibold">Project 1</h3>
+        <p class="text-sm opacity-80">Deskripsi singkat project 1</p>
+      </div>
+      <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-4 shadow-lg">
+        <h3 class="text-xl font-semibold">Project 2</h3>
+        <p class="text-sm opacity-80">Deskripsi singkat project 2</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="photos" class="max-w-3xl mx-auto text-center p-6 mt-10">
+    <h2 class="text-3xl neon font-bold mb-4">Photo Gallery</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <figure class="relative group cursor-pointer">
+        <img src="assets/images/IMG-20250923-WA0030.jpg" alt="Photo 1" class="rounded-xl w-full h-40 object-cover">
+        <figcaption class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+          <button class="btn-download text-white font-bold" data-fname="IMG-20250923-WA0030.jpg">↓</button>
+        </figcaption>
+      </figure>
+      <figure class="relative group cursor-pointer">
+        <img src="assets/images/DSC07189.JPG" alt="Photo 2" class="rounded-xl w-full h-40 object-cover">
+        <figcaption class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+          <button class="btn-download text-white font-bold" data-fname="DSC07189.JPG">↓</button>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="followers" class="max-w-3xl mx-auto text-center p-6 mt-10">
+    <h2 class="text-3xl neon font-bold mb-4">Followers</h2>
+    <p class="opacity-80 text-lg">Jumlah followers saya: <span id="follower-count">1250</span></p>
+  </section>
+
+  <!-- Contact section -->
+  <section id="contact" class="max-w-3xl mx-auto text-center p-6">
+    <h2 class="text-2xl neon font-bold mb-3">Kontak</h2>
+    <p class="opacity-80">Email: <a href="mailto:vinvin140107@gmail.com" class="underline">vinvin140107@gmail.com</a></p>
+    <p class="opacity-80">WhatsApp: <a href="https://wa.me/6285224943832" target="_blank" rel="noopener noreferrer" class="underline">085224943832</a></p>
+    <p class="opacity-80">Instagram: <a href="https://instagram.com/vinn.dasilva_" target="_blank" rel="noopener noreferrer" class="underline">@vinn.dasilva</a></p>
+  </section>
+</main>
 
 <footer class="mt-8">
   <div class="opacity-70">&copy; 2025 Sevinho Dasilva — VinnGallery</div>
 </footer>
 
+<!-- Lightbox -->
 <div id="lightbox" aria-hidden="true">
   <div class="lb-close" id="lb-close" role="button" aria-label="Close">✕</div>
   <span id="lb-prev" class="lb-btn" role="button" aria-label="Previous">‹</span>
@@ -166,8 +127,10 @@ window.addEventListener('load', () => {
   setTimeout(() => loader.remove(), 600);
 });
 
+// Typing effect
 (function typingEffect(){
   const el = $('#typing');
+  if (!el) return;
   const words = ["Content Creator","Photographer","Developer","Digital Artist"];
   let wi=0, ci=0, deleting=false;
   const speed = 90;
@@ -182,6 +145,7 @@ window.addEventListener('load', () => {
   tick();
 })();
 
+// Tilt effect
 (function tilt(){
   const el = document.getElementById('tilt');
   if(!el) return;
@@ -199,6 +163,13 @@ window.addEventListener('load', () => {
   document.addEventListener('mouseleave', ()=> el.style.transform = '');
 })();
 
+// Follower counter simulation
+const followerCount = document.getElementById('follower-count');
+let count = parseInt(followerCount.textContent);
+setInterval(() => {
+  count += Math.floor(Math.random() * 3); // simulasi bertambah
+  followerCount.textContent = count;
+}, 3000);
 </script>
 </body>
 </html>
