@@ -432,19 +432,6 @@
     });
 
 
-      clearBtn.addEventListener('click', ()=>{ guests.length = 0; render(); });
-
-      function render(){ list.innerHTML = '';
-        if(guests.length === 0) { list.innerHTML = '<div class="opacity-70">Belum ada pesan.</div>'; return; }
-        guests.forEach(g => {
-          const el = document.createElement('div'); el.className = 'p-3 rounded-md bg-indigo-900/8';
-          el.innerHTML = <strong>${escapeHtml(g.name)}</strong> <div style="font-size:12px; opacity:.75">${g.at}</div><div style="margin-top:6px">${escapeHtml(g.msg)}</div>;
-          list.appendChild(el);
-        });
-      }
-      function escapeHtml(s){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
-      render();
-    })();
   </script>
 </body>
 </html>
