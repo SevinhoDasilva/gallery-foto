@@ -1,29 +1,24 @@
 <!doctype html>
+
 <html lang="id">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sevinho Dasilva — VinnGallery</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
-  <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js" defer></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-
-  <style>
+  <title>Sevinho Dasilva — VinnGallery</title>  <!-- Tailwind for quick utilities (optional) -->  <script src="https://cdn.tailwindcss.com"></script>  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">  <!-- Swiper (kept for future slider use) -->  <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+  <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js" defer></script>  <!-- Three.js for background galaxy -->  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>  <style>
     :root{ --bg-dark:#030410; --indigo:#6366f1; --muted:#bfc3ff; }
     html{ scroll-behavior:smooth }
-    body{ font-family:"Poppins"; margin:0; background:radial-gradient(circle at 20% 20%, #06071a, #03040d 70%); color:#d5d8e9; }
+    body{ font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; margin:0; background:radial-gradient(circle at 20% 20%, #06071a, #03040d 70%); color:#d5d8e9; }
 
+    /* Background canvas */
     #galaxy-bg{ position:fixed; inset:0; width:100%; height:100%; z-index:-20; pointer-events:none }
 
+    /* Loading screen */
     #loading-screen{ position:fixed; inset:0; display:flex; flex-direction:column; gap:1rem; align-items:center; justify-content:center; background:rgba(2,3,10,0.95); z-index:9999 }
     .holo-ring{ width:80px; height:80px; border-radius:50%; border:4px solid rgba(99,102,241,0.12); border-top:4px solid var(--indigo); animation:spin 1s linear infinite; box-shadow:0 0 18px rgba(99,102,241,0.2) }
     @keyframes spin{ to{ transform:rotate(360deg) } }
 
+    /* Nav */
     nav{ position:fixed; top:0; left:0; right:0; z-index:60; backdrop-filter:blur(6px); background:linear-gradient(180deg, rgba(9,10,20,0.35), rgba(9,10,20,0.12)); border-bottom:1px solid rgba(99,102,241,0.06) }
     nav ul{ display:flex; gap:1.25rem; align-items:center; justify-content:center; padding:.9rem 1rem; margin:0; list-style:none }
     nav a, nav .brand{ color:#cbd5ff; font-weight:600; text-decoration:none }
@@ -41,9 +36,10 @@
 
     .caption{ position:absolute; left:8px; right:8px; bottom:8px; padding:8px 10px; border-radius:10px; background:linear-gradient(180deg, rgba(7,9,20,0.15), rgba(5,6,12,0.45)); backdrop-filter:blur(6px); color:var(--muted); display:flex; justify-content:space-between; gap:10px; align-items:center }
 
+    /* Lightbox */
     #lightbox{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:80; background:rgba(2,3,10,0.9) }
     #lightbox img{ max-width:92%; max-height:88%; border-radius:12px; box-shadow:0 0 40px rgba(99,102,241,0.25) }
-    .lb-btn{ position:absolute; top:50%; transform:translateY(-50%); font-size:2.6rem; color:#cbd5ff; cursor:pointer; padding:8px }
+    .lb-btn{ position:absolute; top:50%; transform:translateY(-50%); font-size:2.6rem; color:#cbd5ff; cursor:pointer; user-select:none; padding:8px }
     #lb-prev{ left:3% } #lb-next{ right:3% }
     .lb-close{ top:6%; right:4%; position:absolute; font-size:1.2rem; cursor:pointer }
 
@@ -51,247 +47,383 @@
     .controls button{ background:transparent; border:0; color:var(--muted); font-weight:600; padding:6px 10px; border-radius:999px; cursor:pointer }
     .controls button:hover{ color:white; box-shadow:0 0 12px rgba(99,102,241,0.12) }
 
+    .stats{ display:flex; gap:18px; justify-content:center; margin-top:12px; flex-wrap:wrap }
+    .stat{ background:linear-gradient(135deg, rgba(99,102,241,0.08), rgba(67,56,202,0.04)); padding:12px 18px; border-radius:12px; min-width:120px; text-align:center }
+
     footer{ text-align:center; padding:22px 12px; color:rgba(189,197,255,0.7) }
-  </style>
-</head>
 
-<body>
-  <canvas id="galaxy-bg" aria-hidden="true"></canvas>
+    /* small screens */
+    @media(max-width:420px){ .controls{ left:8px; bottom:8px } nav ul{ gap:10px; font-size:14px } }
 
-  <div id="loading-screen">
-    <div class="holo-ring"></div>
+    /* Accessibility helpers */
+    button:focus{ outline:2px dashed var(--indigo); outline-offset:3px }
+  </style></head><body>
+  <canvas id="galaxy-bg" aria-hidden="true"></canvas>  <div id="loading-screen" role="status" aria-live="polite">
+    <div class="holo-ring" aria-hidden="true"></div>
     <div style="color:var(--muted); letter-spacing:3px">LOADING VinnDev...</div>
-  </div>
-
-  <nav>
+  </div>  <nav>
     <ul>
-      <li class="brand neon font-bold">VinnDev</li>
+      <li class="brand neon font-bold" aria-hidden="false">VinnDev</li>
       <li><a href="#gallery">Gallery</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-  </nav>
-
-  <header class="mt-6 text-center">
+  </nav>  <header class="mt-6 text-center">
     <div class="header-wrap">
       <div id="tilt" class="tilt">
         <h1 class="neon text-5xl font-extrabold">Sevinho Dasilva</h1>
-        <p id="typing" class="text-indigo-300 mt-2 font-medium"></p>
+        <p id="typing" class="text-indigo-300 mt-2 font-medium" aria-live="polite"></p>
       </div>
-    </div>
+    </div><div class="stats mt-6" aria-hidden="false">
+  <div class="stat">
+    <div id="count-photos" class="text-3xl font-bold">0</div>
+    <div class="text-xs opacity-80">Foto</div>
+  </div>
+  <div class="stat">
+    <div id="count-projects" class="text-3xl font-bold">0</div>
+    <div class="text-xs opacity-80">Projects</div>
+  </div>
+  <div class="stat">
+    <div id="count-followers" class="text-3xl font-bold">0</div>
+    <div class="text-xs opacity-80">Followers</div>
+  </div>
+</div>
 
-    <div class="stats mt-6">
-      <div class="stat">
-        <div id="count-photos" class="text-3xl font-bold">0</div>
-        <div class="text-xs opacity-80">Foto</div>
-      </div>
-      <div class="stat">
-        <div id="count-projects" class="text-3xl font-bold">0</div>
-        <div class="text-xs opacity-80">Projects</div>
-      </div>
-      <div class="stat">
-        <div id="count-followers" class="text-3xl font-bold">0</div>
-        <div class="text-xs opacity-80">Followers</div>
-      </div>
-    </div>
-  </header>
-
-  <div class="controls">
-    <button id="play-sound">Play Music</button>
+  </header>  <div class="controls" aria-hidden="false">
+    <button id="play-sound" aria-pressed="false">Play Music</button>
     <button id="mute-sfx">Mute SFX</button>
     <button id="toggle-theme">Toggle Light</button>
-  </div>
-
-  <main>
-    <section id="gallery" class="masonry mt-6">
-
-      <figure>
+  </div>  <!-- Gallery (masonry) -->  <main>
+    <section id="gallery" class="masonry mt-6" aria-label="Gallery">
+      <figure data-title="City Neon" data-loc="Guntur, 2025" data-desc="Low-light street photo">
         <img loading="lazy" src="DSC07189.JPG" alt="Golden Hour - Gunung Guntur" />
         <figcaption class="caption">
           <div class="meta"><strong>Golden Hour</strong><div style="font-size:11px; opacity:0.85">Gunung Guntur</div></div>
           <div class="actions">
-            <button class="btn-download" data-fname="DSC07189.JPG">↓</button>
-            <button class="btn-share">⤴</button>
+            <button class="btn-download" title="Download" data-fname="DSC07189.JPG">↓</button>
+            <button class="btn-share" title="Share photo">⤴</button>
           </div>
         </figcaption>
-      </figure>
-
-      <figure>
-        <img loading="lazy" src="IMG-20250923-WA0030.jpg" alt="Cikajang Style" />
-        <figcaption class="caption">
-          <div class="meta"><strong>Cikajang Style</strong><div style="font-size:11px; opacity:0.85">Just Style</div></div>
-          <div class="actions">
-            <button class="btn-download" data-fname="IMG-20250923-WA0030.jpg">↓</button>
-            <button class="btn-share">⤴</button>
-          </div>
-        </figcaption>
-      </figure>
-
-    </section>
-
-    <section id="about" class="max-w-3xl mx-auto text-center p-6">
-      <h2 class="text-3xl neon font-bold mb-3">Tentang Saya</h2>
-      <p class="opacity-80 text-lg">Halloo semuanya! Saya adalah Mahasiswa Teknik Informatika yang sedang menempuh pendidikan di ITG...</p>
-    </section>
-
-    <section id="biodata" class="max-w-3xl mx-auto text-center p-6 mt-10">
-      <h2 class="text-3xl neon font-bold mb-4">Biodata</h2>
-      <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-6 text-left">
-        <ul class="space-y-3 text-lg">
-          <li><strong class="text-indigo-400">Nama Lengkap:</strong> Sevinho Dasilva</li>
-          <li><strong class="text-indigo-400">Nama Panggilan:</strong> Vino</li>
-          <li><strong class="text-indigo-400">TTL:</strong> Garut, 14 Januari 2007</li>
-          <li><strong class="text-indigo-400">Alamat:</strong> Asrama Yonif 303 SSM</li>
-          <li><strong class="text-indigo-400">Hobi:</strong> Musik & Olahraga</li>
-        </ul>
+      </figure><figure data-title="Golden Hour" data-loc="ITG, 2025" data-desc="Sunset portrait">
+    <img loading="lazy" src="IMG-20250923-WA0030.jpg" alt="Cikajang Style" />
+    <figcaption class="caption">
+      <div class="meta"><strong>Cikajang Style</strong><div style="font-size:11px; opacity:0.85">Just Style</div></div>
+      <div class="actions">
+        <button class="btn-download" data-fname="IMG-20250923-WA0030.jpg">↓</button>
+        <button class="btn-share" title="Share photo">⤴</button>
       </div>
-    </section>
+    </figcaption>
+  </figure>
+</section>
 
-    <section id="contact" class="max-w-3xl mx-auto text-center p-6">
-      <h2 class="text-2xl neon font-bold mb-3">Kontak</h2>
-      <p class="opacity-80">Email: <a href="mailto:vinvin140107@gmail.com" class="underline">vinvin140107@gmail.com</a></p>
-      <p class="opacity-80">WhatsApp: <a href="https://wa.me/6285224943832" class="underline">085224943832</a></p>
-      <p class="opacity-80">Instagram: <a href="https://instagram.com/vinn.dasilva_" class="underline">@vinn.dasilva_</a></p>
-    </section>
-  </main>
+<section id="about" class="max-w-3xl mx-auto text-center p-6">
+  <h2 class="text-3xl neon font-bold mb-3">Tentang Saya</h2>
+  <p class="opacity-80 leading-relaxed text-lg">Halloo semuanya! Saya adalah Fotografer dan Developer pemula yang berfokus pada fotografi sinematik dan dokumentasi momen sehari-hari. Saya menyukai eksplorasi cahaya rendah (low-light), street photography, dan editing warna bergaya neon/cinematic. Selain memotret, saya juga membangun pengalaman web untuk menampilkan karya saya secara interaktif. VinnGallery hadir sebagai ruang untuk berbagi, berkolaborasi, dan berkembang bersama komunitas kreatif.</p>
+</section>
 
-  <footer class="mt-8">
+<!-- Guestbook kept but non-persistent (no external storage) -->
+<section id="guestbook" class="p-6">
+  <h2 class="text-2xl neon font-bold mb-4 text-center">Guestbook</h2>
+  <div class="guestbook">
+    <form id="guest-form" class="flex flex-col gap-3 mb-4" autocomplete="on">
+      <input id="g-name" placeholder="Nama" class="p-2 rounded-md bg-transparent border border-indigo-700/30" required aria-label="Nama" />
+      <textarea id="g-msg" placeholder="Tulis pesan..." rows="3" class="p-2 rounded-md bg-transparent border border-indigo-700/30" required aria-label="Pesan"></textarea>
+      <div class="flex gap-2">
+        <button type="submit" class="px-4 py-2 rounded-md bg-indigo-600">Kirim</button>
+        <button id="clear-guest" type="button" class="px-4 py-2 rounded-md border border-indigo-600">Kosongkan</button>
+      </div>
+    </form>
+    <div id="guest-list" class="flex flex-col gap-3" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="contact" class="max-w-3xl mx-auto text-center p-6">
+  <h2 class="text-2xl neon font-bold mb-3">Kontak</h2>
+  <p class="opacity-80">Email: <a href="mailto:vinvin140107@gmail.com" class="underline">vinvin140107@gmail.com</a></p>
+  <p class="opacity-80">WhatsApp: <a href="https://wa.me/6285224943832" target="_blank" rel="noopener noreferrer" class="underline">085224943832</a></p>
+  <p class="opacity-80">Instagram: <a href="https://instagram.com/vinn.dasilva_" target="blank" rel="noopener noreferrer" class="underline">@vinn.dasilva</a></p>
+</section>
+
+  </main>  <footer class="mt-8">
     <div class="opacity-70">&copy; 2025 Sevinho Dasilva — VinnGallery</div>
-  </footer>
-
-  <audio id="ambient-audio" loop preload="metadata">
+  </footer>  <!-- Lightbox -->  <div id="lightbox" aria-hidden="true">
+    <div class="lb-close" id="lb-close" role="button" aria-label="Close">✕</div>
+    <span id="lb-prev" class="lb-btn" role="button" aria-label="Previous">‹</span>
+    <img id="lb-img" src="" alt="" />
+    <span id="lb-next" class="lb-btn" role="button" aria-label="Next">›</span>
+  </div>  <!-- Ambient audio (optional) -->  <audio id="ambient-audio" loop preload="metadata">
     <source src="assets/sound/ambient.mp3" type="audio/mpeg" />
-  </audio>
+  </audio>  <script>
+    // Small utility selectors
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
 
-  <!-- =================== FIXED SCRIPT =================== -->
-  <script>
-
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-
-  window.addEventListener('load', () => {
-    const loader = document.getElementById('loading-screen');
-    loader.style.opacity = '0';
-    setTimeout(() => loader.remove(), 600);
-  });
-
-  (function typingEffect(){
-    const el = $('#typing');
-    const words = ["Content Creator","Photographer","Developer","Digital Artist"];
-    let wi=0, ci=0, deleting=false;
-    function tick(){
-      const w = words[wi];
-      el.textContent = w.slice(0, ci);
-      if (!deleting) ci++; else ci--;
-      if (!deleting && ci > w.length) { deleting = true; setTimeout(tick, 700); return; }
-      if (deleting && ci === 0) { deleting = false; wi = (wi+1)%words.length; }
-      setTimeout(tick, deleting?50:90);
-    }
-    tick();
-  })();
-
-  (function tilt(){
-    const el = document.getElementById('tilt');
-    if(!el) return;
-    document.addEventListener('mousemove', (e)=>{
-      const r = el.getBoundingClientRect();
-      const dx = (e.clientX - (r.left+r.width/2))/r.width;
-      const dy = (e.clientY - (r.top+r.height/2))/r.height;
-      el.style.transform = `rotateX(${dy*6}deg) rotateY(${dx*-12}deg) translateZ(8px)`;
+    // Remove loader after everything has started
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loading-screen');
+      if (!loader) return;
+      loader.style.transition = 'opacity .5s ease';
+      loader.style.opacity = '0';
+      setTimeout(() => loader.remove(), 600);
     });
-    document.addEventListener('mouseleave', ()=> el.style.transform = '');
-  })();
 
-  const lightbox = $('#lightbox');
-  const lbImg = $('#lb-img');
-  let images = [];
-  let curIndex = -1;
-  function refreshImages(){ images = $$('.masonry figure img'); }
-  refreshImages();
+    // Typing effect (cleaner)
+    (function typingEffect(){
+      const el = $('#typing');
+      const words = ["Content Creator","Photographer","Developer","Digital Artist"];
+      let wi=0, ci=0, deleting=false;
+      const speed = 90;
+      function tick(){
+        const w = words[wi];
+        el.textContent = w.slice(0, ci);
+        if (!deleting) ci++; else ci--;
+        if (!deleting && ci > w.length) { deleting = true; setTimeout(tick, 700); return; }
+        if (deleting && ci === 0) { deleting = false; wi = (wi+1)%words.length; }
+        setTimeout(tick, deleting?50:speed);
+      }
+      tick();
+    })();
 
-  function openLightbox(i){
-    lbImg.src = images[i].src;
-    curIndex = i;
-    lightbox.style.display = 'flex';
-  }
+    // Tilt effect (works reliably and with limits)
+    (function tilt(){
+      const el = document.getElementById('tilt');
+      if(!el) return;
+      function onMove(e){
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width/2;
+        const cy = rect.top + rect.height/2;
+        const dx = (e.clientX - cx)/rect.width;
+        const dy = (e.clientY - cy)/rect.height;
+        const rx = (dy * 6).toFixed(2);
+        const ry = (dx * -12).toFixed(2);
+        el.style.transform = rotateX(${rx}deg) rotateY(${ry}deg) translateZ(8px);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseleave', ()=> el.style.transform = '');
+    })();
 
-  document.addEventListener('click',(e)=>{
-    const img = e.target.closest('.masonry figure img');
-    if(img) openLightbox(images.indexOf(img));
-  });
+    // Lightbox - delegated listeners
+    const lightbox = $('#lightbox');
+    const lbImg = $('#lb-img');
+    let images = [];
+    let curIndex = -1;
 
-  $('#lb-close').onclick = ()=> lightbox.style.display = 'none';
-  $('#lb-prev').onclick = ()=> openLightbox((curIndex-1+images.length)%images.length);
-  $('#lb-next').onclick = ()=> openLightbox((curIndex+1)%images.length);
+    function refreshImages(){ images = $$('.masonry figure img'); }
+    refreshImages();
 
-  lightbox.onclick = e => { if(e.target===lightbox) lightbox.style.display='none'; };
-
-  function downloadWithWatermark(imgSrc, fname){
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = imgSrc;
-    img.onload = ()=>{
-      const c = document.createElement('canvas');
-      c.width = img.naturalWidth;
-      c.height = img.naturalHeight;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(img,0,0);
-      ctx.font = `${Math.round(c.width*0.03)}px Poppins`;
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      ctx.fillText("Sevinho Dasilva", c.width-20, c.height-20);
-      const a = document.createElement('a');
-      a.href = c.toDataURL();
-      a.download = fname;
-      a.click();
+    function openLightbox(i){
+      const img = images[i];
+      if(!img) return;
+      lbImg.src = img.src;
+      lbImg.alt = img.alt || '';
+      lightbox.style.display = 'flex';
+      lightbox.setAttribute('aria-hidden','false');
+      curIndex = i;
     }
-  }
 
-  document.addEventListener('click',(e)=>{
-    const dl = e.target.closest('.btn-download');
-    if(dl){
-      const img = dl.closest('figure').querySelector('img');
-      downloadWithWatermark(img.src, dl.dataset.fname);
+    document.addEventListener('click', (e) => {
+      const dl = e.target.closest('.masonry figure img');
+      if(dl) { const i = images.indexOf(dl); openLightbox(i); }
+    });
+
+    $('#lb-close').addEventListener('click', ()=> { lightbox.style.display = 'none'; lightbox.setAttribute('aria-hidden','true'); });
+    $('#lb-prev').addEventListener('click', ()=> openLightbox((curIndex - 1 + images.length) % images.length));
+    $('#lb-next').addEventListener('click', ()=> openLightbox((curIndex + 1) % images.length));
+    lightbox.addEventListener('click', (e)=> { if(e.target === lightbox) { lightbox.style.display='none'; lightbox.setAttribute('aria-hidden','true'); } });
+
+    // Download with watermark (uses canvas). If images are local, crossOrigin may fail in some hosting.
+    function downloadWithWatermark(imgSrc, fname, watermarkText='Sevinho Dasilva'){
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = imgSrc;
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img,0,0);
+        const size = Math.max(12, Math.round(c.width * 0.03));
+        ctx.font = ${size}px Poppins, sans-serif;
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        ctx.lineWidth = Math.max(2, Math.round(size*0.12));
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'bottom';
+        ctx.strokeText(watermarkText, c.width - 12, c.height - 12);
+        ctx.fillText(watermarkText, c.width - 12, c.height - 12);
+        const a = document.createElement('a');
+        a.href = c.toDataURL('image/jpeg', 0.92);
+        a.download = fname || 'photo.jpg';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      };
+      img.onerror = () => alert('Gagal memproses gambar untuk didownload. Jika file berada di server lokal, pastikan hosting mengizinkan akses CORS.');
     }
-  });
 
-  const ambient = $('#ambient-audio');
-  const playBtn = $('#play-sound');
-  const muteBtn = $('#mute-sfx');
-  let mute = false;
+    // Delegated controls for download & share
+    document.addEventListener('click', (e) => {
+      const dlBtn = e.target.closest('.btn-download');
+      if(dlBtn){
+        const figure = dlBtn.closest('figure');
+        const src = figure.querySelector('img').src;
+        const fname = dlBtn.dataset.fname || 'photo.jpg';
+        playClick();
+        downloadWithWatermark(src, fname);
+      }
 
-  playBtn.onclick = ()=>{
-    if(ambient.paused){ ambient.play(); playBtn.textContent='Pause Music'; }
-    else { ambient.pause(); playBtn.textContent='Play Music'; }
-  };
+      const shareBtn = e.target.closest('.btn-share');
+      if(shareBtn){
+        const fig = shareBtn.closest('figure');
+        const title = fig.dataset.title || 'Foto';
+        const src = fig.querySelector('img').src;
+        if(navigator.share){ navigator.share({ title, url: src }).catch(()=>{}); }
+        else { navigator.clipboard.writeText(src).then(()=> alert('Link foto disalin ke clipboard!')).catch(()=> alert('Gagal menyalin link.')) }
+      }
+    });
 
-  muteBtn.onclick = ()=>{
-    mute = !mute;
-    muteBtn.textContent = mute ? "Unmute SFX" : "Mute SFX";
-  };
+    // Simple SFX helper
+    const ambient = $('#ambient-audio');
+    const playBtn = $('#play-sound');
+    const muteSfxBtn = $('#mute-sfx');
+    let sfxMuted = false;
 
-  const themeBtn = $('#toggle-theme');
-  let light = false;
-  themeBtn.onclick = ()=>{
-    light = !light;
-    document.body.style.background = light
-      ? 'linear-gradient(180deg,#f6f7fb,#e9ecff)'
-      : 'radial-gradient(circle at 20% 20%, #06071a, #03040d 70%)';
-    document.body.style.color = light ? '#0a0a14' : '#d5d8e9';
-    themeBtn.textContent = light ? 'Toggle Dark' : 'Toggle Light';
-  };
+    function playClick(){ if(!sfxMuted){ const a = new Audio(); a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA='; a.volume = 0.12; a.play().catch(()=>{}); } }
 
-  function countUp(el, target){
-    let n=0;
-    const timer=setInterval(()=>{
-      n++;
-      el.textContent=n;
-      if(n>=target) clearInterval(timer);
-    },20);
-  }
-  countUp($('#count-photos'), $$('.masonry figure').length);
-  countUp($('#count-projects'), 7);
-  countUp($('#count-followers'), 1240);
+    playBtn.addEventListener('click', ()=>{
+      if(ambient.paused){ ambient.play().catch(()=>{}); playBtn.textContent='Pause Music'; playBtn.setAttribute('aria-pressed','true'); }
+      else { ambient.pause(); playBtn.textContent='Play Music'; playBtn.setAttribute('aria-pressed','false'); }
+    });
 
-  </script>
-</body>
+    muteSfxBtn.addEventListener('click', ()=>{ sfxMuted = !sfxMuted; muteSfxBtn.textContent = sfxMuted ? 'Unmute SFX' : 'Mute SFX'; });
+
+    // Theme toggle (simple)
+    const themeBtn = $('#toggle-theme');
+    let lightMode = false;
+    themeBtn.addEventListener('click', ()=>{
+      lightMode = !lightMode;
+      document.body.style.background = lightMode ? 'linear-gradient(180deg,#f6f7fb,#e9ecff)' : 'radial-gradient(circle at 20% 20%, #06071a, #03040d 70%)';
+      document.body.style.color = lightMode ? '#081022' : '#d5d8e9';
+      themeBtn.textContent = lightMode ? 'Toggle Dark' : 'Toggle Light';
+      playClick();
+    });
+
+    // CountUp animation
+    function countUp(el, target, duration=1200){
+      const start = 0; const range = target - start; const startTime = performance.now();
+      function step(now){ const t = Math.min(1, (now - startTime)/duration); el.textContent = Math.floor(start + range * t); if(t < 1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    }
+
+    countUp($('#count-photos'), $$('.masonry figure').length, 900);
+    countUp($('#count-projects'), 7, 900);
+    countUp($('#count-followers'), 1240, 1000);
+
+    // Scroll reveal with IntersectionObserver
+    (function scrollReveal(){
+      const items = document.querySelectorAll('section, header, footer, .masonry figure');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if(e.isIntersecting){ e.target.style.opacity = 1; e.target.style.transform = 'translateY(0)'; e.target.style.transition = 'all .8s cubic-bezier(.2,.9,.2,1)'; io.unobserve(e.target); }
+        });
+      }, { threshold: 0.08 });
+      items.forEach(it => { it.style.opacity = 0; it.style.transform = 'translateY(10px)'; io.observe(it); });
+    })();
+
+    // Smooth link warp effect
+    (function warpLinks(){
+      document.querySelectorAll('a[href^="#"]').forEach(a=>{
+        a.addEventListener('click', (e)=>{
+          const target = document.querySelector(a.getAttribute('href'));
+          if(!target) return; e.preventDefault(); document.body.style.transition = 'transform .45s ease, opacity .45s ease'; document.body.style.transform = 'scale(.995)'; document.body.style.opacity = 0.85;
+          setTimeout(()=> { target.scrollIntoView({behavior:'smooth', block:'start'}); document.body.style.transform = ''; document.body.style.opacity = ''; }, 350);
+        });
+      });
+    })();
+
+    // Galaxy background using Three.js (kept lightweight)
+    (function galaxy(){
+      if(typeof THREE === 'undefined') return; // graceful fallback
+      const canvas = document.getElementById('galaxy-bg');
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 2000);
+      camera.position.z = 200;
+
+      const starCount = 1200;
+      const positions = new Float32Array(starCount * 3);
+      const sizes = new Float32Array(starCount);
+      for(let i=0;i<starCount;i++){
+        positions[i*3] = (Math.random()-0.5)*2000;
+        positions[i*3+1] = (Math.random()-0.5)*1000;
+        positions[i*3+2] = (Math.random()-0.5)*2000;
+        sizes[i] = Math.random()*1.2 + 0.2;
+      }
+      const starsGeom = new THREE.BufferGeometry();
+      starsGeom.setAttribute('position', new THREE.BufferAttribute(positions,3));
+      starsGeom.setAttribute('size', new THREE.BufferAttribute(sizes,1));
+      const starsMat = new THREE.PointsMaterial({ color:0x9aa8ff, size:1.2, sizeAttenuation:true, transparent:true });
+      const starPoints = new THREE.Points(starsGeom, starsMat);
+      scene.add(starPoints);
+
+      const loader = new THREE.TextureLoader();
+      loader.crossOrigin = '';
+      loader.load('https://raw.githubusercontent.com/limhenry/space-assets/main/nebula.png', (tex)=>{
+        for(let i=0;i<5;i++){
+          const m = new THREE.SpriteMaterial({ map:tex, blending:THREE.AdditiveBlending, opacity:0.28 });
+          const s = new THREE.Sprite(m);
+          s.scale.set(900,600,1);
+          s.position.set((Math.random()-0.5)*800, (Math.random()-0.5)*400, -400 - i*120);
+          scene.add(s);
+        }
+      });
+
+      function onResize(){ renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); }
+      onResize(); window.addEventListener('resize', onResize);
+
+      let t = 0;
+      function animate(){ requestAnimationFrame(animate); t += 0.002; starPoints.rotation.y += 0.0008; starPoints.rotation.x = Math.sin(t)*0.002; const sc = window.scrollY / (document.body.scrollHeight - window.innerHeight || 1); camera.position.x = (sc - 0.5) * 60; camera.position.y = Math.sin(t)*10; renderer.render(scene, camera); }
+      animate();
+    })();
+
+    // Keyboard navigation for lightbox
+    document.addEventListener('keydown', (e)=>{
+      if(lightbox.style.display === 'flex'){
+        if(e.key === 'Escape') { $('#lb-close').click(); }
+        if(e.key === 'ArrowLeft') { $('#lb-prev').click(); }
+        if(e.key === 'ArrowRight') { $('#lb-next').click(); }
+      }
+    });
+
+    // Guestbook — in-memory only (keeps privacy, not persisted)
+    (function guestbook(){
+      const form = document.getElementById('guest-form');
+      const list = document.getElementById('guest-list');
+      const clearBtn = document.getElementById('clear-guest');
+      const guests = [];
+
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const name = document.getElementById('g-name').value.trim();
+        const msg = document.getElementById('g-msg').value.trim();
+        if(!name || !msg) return;
+        const entry = { name, msg, at: new Date().toLocaleString() };
+        guests.unshift(entry);
+        render();
+        form.reset();
+      });
+
+      clearBtn.addEventListener('click', ()=>{ guests.length = 0; render(); });
+
+      function render(){ list.innerHTML = '';
+        if(guests.length === 0) { list.innerHTML = '<div class="opacity-70">Belum ada pesan.</div>'; return; }
+        guests.forEach(g => {
+          const el = document.createElement('div'); el.className = 'p-3 rounded-md bg-indigo-900/8';
+          el.innerHTML = <strong>${escapeHtml(g.name)}</strong> <div style="font-size:12px; opacity:.75">${g.at}</div><div style="margin-top:6px">${escapeHtml(g.msg)}</div>;
+          list.appendChild(el);
+        });
+      }
+      function escapeHtml(s){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+      render();
+    })();
+  </script></body>
 </html>
