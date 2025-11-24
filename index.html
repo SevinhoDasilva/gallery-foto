@@ -5,32 +5,69 @@
   <title>Gallery Futuristik Saya</title>  <script src="https://cdn.tailwindcss.com"></script>  <style>
     html { scroll-behavior: smooth; }
 
-    /* ==== THEME FUTURISTIK ==== */
+    /* ======= BACKGROUND FUTURISTIK ======= */
     body {
-      background: #06070d;
-      color: #d0d4e4;
+      background: radial-gradient(circle at 20% 20%, #06071a, #03040d 70%);
+      color: #d5d8e9;
+      overflow-x: hidden;
     }
 
-    /* Gradient Futuristik */
-    .futuristic-bg {
-      background: radial-gradient(circle at 20% 20%, #0a0f2d, #050612 70%);
+    /* Hologram Loading Screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #02030a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .holo-ring {
+      width: 80px;
+      height: 80px;
+      border: 4px solid rgba(99,102,241,0.2);
+      border-top: 4px solid #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite, glow 2s ease-in-out infinite;
+    }
+    @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+    @keyframes glow {
+      0%,100% { box-shadow: 0 0 15px #4f46e5; }
+      50% { box-shadow: 0 0 35px #6366f1; }
+    }
+    .loading-text {
+      font-size: 1.3rem;
+      color: #818cf8;
+      letter-spacing: 2px;
+      animation: fadeBlink 2s infinite;
+    }
+    @keyframes fadeBlink {
+      0%,100% { opacity: 0.3; }
+      50% { opacity: 1; }
     }
 
-    /* Neon Glow */
+    /* ======= SCROLL ANIMATIONS ======= */
+    .scroll-anim {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.8s ease-out;
+    }
+    .scroll-anim.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ======= NEON EFFECT ======= */
     .neon {
-      box-shadow: 0 0 10px #4f46e5, 0 0 20px #4338ca;
+      text-shadow: 0 0 10px #4f46e5, 0 0 20px #4338ca;
     }
 
-    /* Efek Fade-in */
-    .fade-in {
-      animation: fadeIn 1s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ==== MASONRY GALLERY ==== */
+    /* ======= MASONRY GALLERY ======= */
     .masonry {
       column-count: 1;
       column-gap: 1rem;
@@ -38,20 +75,21 @@
     @media (min-width: 640px) { .masonry { column-count: 2; } }
     @media (min-width: 768px) { .masonry { column-count: 3; } }
     @media (min-width: 1024px) { .masonry { column-count: 4; } }
+
     .masonry img {
       width: 100%;
       margin-bottom: 1rem;
       border-radius: 14px;
-      transition: 0.3s ease;
+      transition: 0.35s ease;
       cursor: pointer;
       background: #0a0a10;
     }
     .masonry img:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 12px #6366f1, 0 0 24px #4f46e5;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px #6366f1, 0 0 22px #4f46e5;
     }
 
-    /* ==== LIGHTBOX ==== */
+    /* ======= LIGHTBOX ======= */
     #lightbox {
       display: none;
       position: fixed;
@@ -68,12 +106,19 @@
       max-width: 90%;
       max-height: 90%;
       border-radius: 12px;
-      box-shadow: 0 0 20px #4f46e5;
+      box-shadow: 0 0 25px #6366f1;
     }
-
   </style>  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Lightbox
+    document.addEventListener("DOMContentLoaded", () => {
+
+      /* ===== HOLOGRAM LOADING ===== */
+      const loader = document.getElementById("loading-screen");
+      setTimeout(() => {
+        loader.style.opacity = 0;
+        setTimeout(() => loader.remove(), 500);
+      }, 1500);
+
+      /* ===== LIGHTBOX ===== */
       const lightbox = document.getElementById('lightbox');
       const lightImg = document.getElementById('lightbox-img');
       document.querySelectorAll('.masonry img').forEach(img => {
@@ -82,27 +127,43 @@
           lightbox.style.display = 'flex';
         });
       });
-      lightbox.addEventListener('click', () => {
-        lightbox.style.display = 'none';
-      });
+      lightbox.addEventListener('click', () => lightbox.style.display = 'none');
+
+      /* ===== SCROLL ANIMATIONS ===== */
+      const animatedItems = document.querySelectorAll('.scroll-anim');
+      const onScroll = () => {
+        animatedItems.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight - 100) {
+            el.classList.add('show');
+          }
+        });
+      };
+      window.addEventListener('scroll', onScroll);
+      onScroll();
     });
-  </script></head><body class="fade-in futuristic-bg">  <!-- LIGHTBOX -->  <div id="lightbox"><img id="lightbox-img" /></div>  <!-- NAVBAR -->  <nav class="fixed top-0 left-0 w-full text-white py-4 flex justify-center gap-10 z-50 backdrop-blur-md bg-opacity-20 bg-indigo-900/40 border-b border-indigo-600/40">
+  </script></head>
+<body>  <!-- ===== HOLOGRAM LOADING SCREEN ===== -->  <div id="loading-screen">
+    <div class="holo-ring"></div>
+    <div class="loading-text">Loading VinnDev...</div>
+  </div>  <!-- LIGHTBOX -->  <div id="lightbox"><img id="lightbox-img" /></div>  <!-- NAVBAR -->  <nav class="fixed top-0 left-0 w-full text-white py-4 flex justify-center gap-12 z-50 backdrop-blur-md bg-opacity-20 bg-indigo-900/40 border-b border-indigo-600/40">
+    <span class="font-bold text-indigo-300 neon">VinnDev</span>
     <a href="#gallery" class="font-bold hover:text-indigo-300">Gallery</a>
     <a href="#about" class="font-bold hover:text-indigo-300">About</a>
     <a href="#contact" class="font-bold hover:text-indigo-300">Contact</a>
-  </nav>  <!-- HEADER -->  <header class="text-white text-center py-16 mt-16">
+  </nav>  <!-- HEADER -->  <header class="text-white text-center py-20 mt-20 scroll-anim">
     <h1 class="text-5xl font-bold neon">Gallery Futuristik</h1>
-    <p class="text-lg opacity-80 mt-2">Dengan efek neon & tampilan ultra modern</p>
-  </header>  <!-- GALLERY MASONRY MODE -->  <section id="gallery" class="p-6 fade-in masonry">
+    <p class="text-lg opacity-80 mt-3 tracking-wide">Efek neon, animasi premium, dan tampilan ultra modern</p>
+  </header>  <!-- GALLERY -->  <section id="gallery" class="p-6 masonry scroll-anim">
     <img src="DSC07189.JPG" alt="Foto 1" />
     <img src="IMG-20250923-WA0030.jpg" alt="Foto 2" />
-  </section>  <!-- ABOUT -->  <section id="about" class="max-w-3xl mx-auto text-center p-10 fade-in">
-    <h2 class="text-3xl font-bold mb-4 text-indigo-300">Tentang Saya</h2>
-    <p class="opacity-80">Saya membuat galeri futuristik ini untuk menampilkan foto favorit dengan gaya neon modern.</p>
-  </section>  <!-- CONTACT -->  <section id="contact" class="max-w-3xl mx-auto text-center p-10 fade-in">
-    <h2 class="text-3xl font-bold mb-4 text-indigo-300">Kontak</h2>
+  </section>  <!-- ABOUT -->  <section id="about" class="max-w-3xl mx-auto text-center p-10 scroll-anim">
+    <h2 class="text-3xl font-bold mb-4 text-indigo-300 neon">Tentang Saya</h2>
+    <p class="opacity-80 leading-relaxed">Saya membuat galeri futuristik ini untuk menampilkan foto favorit saya dengan gaya neon modern dan animasi premium.</p>
+  </section>  <!-- CONTACT -->  <section id="contact" class="max-w-3xl mx-auto text-center p-10 scroll-anim">
+    <h2 class="text-3xl font-bold mb-4 text-indigo-300 neon">Kontak</h2>
     <p>Email: contoh@email.com</p>
-  </section>  <!-- FOOTER -->  <footer class="text-center text-indigo-300 py-6 mt-10 opacity-70">
-    <p>&copy; 2025 Gallery Futuristik</p>
+  </section>  <!-- FOOTER -->  <footer class="text-center text-indigo-300 py-6 mt-10 opacity-70 scroll-anim">
+    <p>&copy; 2025 VinnDev — Gallery Futuristik</p>
   </footer></body>
 </html>
