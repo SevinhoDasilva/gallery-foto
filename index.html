@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gallery Foto Saya</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
+  <title>Gallery Foto Saya</title>  <script src="https://cdn.tailwindcss.com"></script>  <style>
     html { scroll-behavior: smooth; }
 
     .fade-in {
@@ -31,53 +26,30 @@
     body.dark header, body.dark footer, body.dark nav {
       background: #111827;
     }
-  </style>
-
-  <script>
+  </style>  <script>
     document.addEventListener('DOMContentLoaded', () => {
       const toggle = document.getElementById('themeToggle');
       toggle.addEventListener('click', () => {
         document.body.classList.toggle('dark');
       });
     });
-  </script>
-</head>
-
-<body class="fade-in">
-
-  <nav class="fixed top-0 left-0 w-full bg-blue-900 text-white py-3 flex justify-center gap-6 z-50 shadow-lg">
+  </script></head><body class="fade-in">  <nav class="fixed top-0 left-0 w-full bg-blue-900 text-white py-3 flex justify-center gap-6 z-50 shadow-lg">
     <a href="#gallery" class="font-bold">Gallery</a>
     <a href="#about" class="font-bold">About</a>
     <a href="#contact" class="font-bold">Contact</a>
-  </nav>
-
-  <div id="themeToggle" class="fixed right-6 bottom-6 bg-blue-900 text-white px-4 py-2 rounded-xl cursor-pointer shadow-lg">Mode</div>
-
-  <header class="bg-blue-900 text-white text-center py-10 mt-14">
+  </nav>  <div id="themeToggle" class="fixed right-6 bottom-6 bg-blue-900 text-white px-4 py-2 rounded-xl cursor-pointer shadow-lg">Mode</div>  <header class="bg-blue-900 text-white text-center py-10 mt-14">
     <h1 class="text-4xl font-bold">Gallery Foto Saya</h1>
     <p class="text-lg opacity-80">Koleksi foto favorit saya</p>
-  </header>
-
-  <section id="gallery" class="gallery fade-in p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    <img src="foto1.jpg" class="rounded-xl shadow-lg w-full h-64 object-cover" />
-    <img src="foto2.jpg" class="rounded-xl shadow-lg w-full h-64 object-cover" />
-    <img src="foto3.jpg" class="rounded-xl shadow-lg w-full h-64 object-cover" />
-    <img src="foto4.jpg" class="rounded-xl shadow-lg w-full h-64 object-cover" />
-  </section>
-
-  <section id="about" class="max-w-3xl mx-auto text-center p-10 fade-in">
+  </header>  <section id="gallery" class="gallery fade-in p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <img src="DSC07189.JPG" class="rounded-xl shadow-lg w-full h-64 object-cover" />
+    <img src="IMG-20250923-WA0030.jpg" class="rounded-xl shadow-lg w-full h-64 object-cover" />
+  </section>  <section id="about" class="max-w-3xl mx-auto text-center p-10 fade-in">
     <h2 class="text-3xl font-bold mb-4">Tentang Saya</h2>
     <p class="opacity-80">Halo! Saya membuat galeri ini untuk menyimpan dan menampilkan foto-foto favorit saya. Selamat menikmati!</p>
-  </section>
-
-  <section id="contact" class="max-w-3xl mx-auto text-center p-10 fade-in">
+  </section>  <section id="contact" class="max-w-3xl mx-auto text-center p-10 fade-in">
     <h2 class="text-3xl font-bold mb-4">Kontak</h2>
     <p>Email: contoh@email.com</p>
-  </section>
-
-  <footer class="bg-blue-900 text-white text-center py-6 mt-10">
+  </section>  <footer class="bg-blue-900 text-white text-center py-6 mt-10">
     <p>&copy; 2025 Gallery Pribadi</p>
-  </footer>
-
-</body>
+  </footer></body>
 </html>
