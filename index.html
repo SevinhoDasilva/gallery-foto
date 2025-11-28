@@ -131,12 +131,6 @@
     </div>
   </header>
 
-  <!-- Controls -->
-  <div class="controls">
-    <button id="play-sound">Play Music</button>
-    <button id="mute-sfx">Mute SFX</button>
-    <button id="toggle-theme">Toggle Light</button>
-  </div>
 
   <!-- =================== -->
   <!-- GALLERY (fixed)     -->
@@ -356,21 +350,7 @@ document.querySelectorAll(".masonry figure").forEach(fig => {
 document.querySelector(".close-lightbox").onclick =
   () => lightbox.classList.remove("active");
 
-/* ============================
-   MUSIC CONTROL
-============================ */
-const bgMusic = new Audio("music.mp3");
-bgMusic.loop = true;
 
-document.getElementById("play-sound").onclick = () => bgMusic.play();
-document.getElementById("mute-sfx").onclick = () => bgMusic.pause();
-
-/* ============================
-   THEME TOGGLE
-============================ */
-document.getElementById("toggle-theme").onclick = () => {
-  document.body.classList.toggle("light");
-};
 
 /* ============================
    GUESTBOOK (LocalStorage)
