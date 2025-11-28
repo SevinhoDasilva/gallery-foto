@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -53,7 +54,7 @@
       gap: 1rem;
       align-items: center;
       justify-content: center;
-      background: rgba(2,3,10,0.95);
+      background: rgba(2, 3, 10, 0.95);
       z-index: 99999;
     }
 
@@ -61,16 +62,17 @@
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      border: 4px solid rgba(99,102,241,0.12);
+      border: 4px solid rgba(99, 102, 241, 0.12);
       border-top: 4px solid var(--indigo-600);
       animation: spin 1s linear infinite;
-      box-shadow: 0 0 18px rgba(99,102,241,0.2);
+      box-shadow: 0 0 18px rgba(99, 102, 241, 0.2);
     }
 
     @keyframes spin {
       from {
         transform: rotate(0);
       }
+
       to {
         transform: rotate(360deg);
       }
@@ -84,8 +86,8 @@
       right: 0;
       z-index: 60;
       backdrop-filter: blur(6px);
-      background: linear-gradient(180deg, rgba(9,10,20,0.35), rgba(9,10,20,0.12));
-      border-bottom: 1px solid rgba(99,102,241,0.06);
+      background: linear-gradient(180deg, rgba(9, 10, 20, 0.35), rgba(9, 10, 20, 0.12));
+      border-bottom: 1px solid rgba(99, 102, 241, 0.06);
     }
 
     nav ul {
@@ -96,7 +98,6 @@
       padding: 0.9rem 1rem;
       margin: 0;
       list-style: none;
-      flex-wrap: wrap;  /* Flex Wrap untuk perangkat kecil */
     }
 
     nav a {
@@ -109,7 +110,7 @@
 
     nav a:hover {
       color: white;
-      box-shadow: 0 0 10px rgba(99,102,241,0.12);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.12);
     }
 
     /* Header */
@@ -180,7 +181,7 @@
 
     .masonry figure:hover img {
       transform: scale(1.05) rotate(0.5deg);
-      box-shadow: 0 0 22px rgba(99,102,241,0.18);
+      box-shadow: 0 0 22px rgba(99, 102, 241, 0.18);
     }
 
     .caption {
@@ -190,71 +191,13 @@
       bottom: 8px;
       padding: 8px 10px;
       border-radius: 10px;
-      background: linear-gradient(180deg, rgba(7,9,20,0.15), rgba(5,6,12,0.45));
+      background: linear-gradient(180deg, rgba(7, 9, 20, 0.15), rgba(5, 6, 12, 0.45));
       backdrop-filter: blur(6px);
       color: var(--muted);
       display: flex;
       justify-content: space-between;
       gap: 10px;
       align-items: center;
-    }
-
-    /* Improve responsiveness */
-    .masonry {
-      column-gap: 0.5rem;
-    }
-
-    /* Add responsive modal for Lightbox */
-    #lightbox-content {
-      width: 90%;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    #lightbox img {
-      width: 100%;
-      height: auto;
-    }
-
-    /* Guestbook */
-    #guestbook-form input,
-    #guestbook-form textarea {
-      width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      background-color: #333;
-      color: white;
-      border: 1px solid #444;
-    }
-
-    #guestbook-form button {
-      width: 100%;
-      padding: 0.75rem;
-      background-color: #6366f1;
-      color: white;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    /* Fix for smaller devices */
-    @media (max-width: 768px) {
-      nav ul {
-        padding: 0.5rem;
-        gap: 1rem;
-      }
-
-      .stats {
-        flex-direction: column;
-        gap: 1.5rem;
-        margin-top: 2rem;
-      }
-
-      .caption {
-        font-size: 14px;
-        padding: 6px 8px;
-      }
     }
   </style>
 </head>
@@ -295,50 +238,214 @@
         <div id="count-projects" class="text-3xl font-bold">0</div>
         <div class="text-xs opacity-80">Projects</div>
       </div>
+      <div class="stat">
+        <div id="count-followers" class="text-3xl font-bold">0</div>
+        <div class="text-xs opacity-80">Followers</div>
+      </div>
     </div>
   </header>
 
   <!-- Gallery -->
-  <div class="masonry">
-    <figure>
-      <img src="https://via.placeholder.com/400" alt="Gallery Image">
-      <div class="caption">
-        <span>Image Caption</span>
-        <a href="#lightbox" class="text-indigo-600">View</a>
-      </div>
-    </figure>
-  </div>
+  <section id="gallery" class="mt-6 px-3">
+    <div class="masonry">
+      <!-- FOTO 1 -->
+      <figure data-title="City Neon" data-loc="Guntur, 2025" data-desc="Low-light street photo">
+        <img loading="lazy" src="foto1.jpg" alt="City Neon" />
+        <figcaption class="caption">
+          <div class="meta">
+            <strong>Golden Hour</strong>
+            <div style="font-size:11px; opacity:0.85">Gunung Guntur</div>
+          </div>
+          <div class="actions">
+            <button class="btn-download" data-fname="foto1.jpg">↓</button>
+            <button class="btn-share">⤴</button>
+          </div>
+        </figcaption>
+      </figure>
 
-  <!-- Guestbook -->
-  <div id="guestbook" class="my-16">
-    <h2 class="text-center text-3xl mb-4">Guestbook</h2>
-    <form id="guestbook-form" class="max-w-xl mx-auto">
-      <input type="text" placeholder="Your Name" required />
-      <textarea placeholder="Your Message" required></textarea>
-      <button type="submit">Submit</button>
-    </form>
-  </div>
+      <!-- FOTO 2 -->
+      <figure data-title="Golden Hour" data-loc="ITG, 2025" data-desc="Sunset portrait">
+        <img loading="lazy" src="foto2.jpg" alt="Golden Hour" />
+        <figcaption class="caption">
+          <div class="meta">
+            <strong>Cikajang Style</strong>
+            <div style="font-size:11px; opacity:0.85">Just Style</div>
+          </div>
+          <div class="actions">
+            <button class="btn-download" data-fname="foto2.jpg">↓</button>
+            <button class="btn-share">⤴</button>
+          </div>
+        </figcaption>
+      </figure>
+
+      <!-- FOTO 3 -->
+      <figure data-title="Mountain View" data-loc="Bandung, 2025" data-desc="Landscape with sunset">
+        <img loading="lazy" src="foto3.jpg" alt="Mountain View" />
+        <figcaption class="caption">
+          <div class="meta">
+            <strong>Mountain Sunset</strong>
+            <div style="font-size:11px; opacity:0.85">Bandung</div>
+          </div>
+          <div class="actions">
+            <button class="btn-download" data-fname="foto3.jpg">↓</button>
+            <button class="btn-share">⤴</button>
+          </div>
+        </figcaption>
+      </figure>
+
+      <!-- FOTO 4 -->
+      <figure data-title="Forest Path" data-loc="Garut, 2025" data-desc="Nature photography">
+        <img loading="lazy" src="foto4.jpg" alt="Forest Walk" />
+        <figcaption class="caption">
+          <div class="meta">
+            <strong>Forest Walk</strong>
+            <div style="font-size:11px; opacity:0.85">Garut</div>
+          </div>
+          <div class="actions">
+            <button class="btn-download" data-fname="foto4.jpg">↓</button>
+            <button class="btn-share">⤴</button>
+          </div>
+        </figcaption>
+      </figure>
+
+      <!-- FOTO 5 -->
+      <figure data-title="Cityscape" data-loc="Jakarta, 2025" data-desc="Night lights photography">
+        <img loading="lazy" src="foto5.jpg" alt="City Lights" />
+        <figcaption class="caption">
+          <div class="meta">
+            <strong>City Lights</strong>
+            <div style="font-size:11px; opacity:0.85">Jakarta</div>
+          </div>
+          <div class="actions">
+            <button class="btn-download" data-fname="foto5.jpg">↓</button>
+            <button class="btn-share">⤴</button>
+          </div>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="max-w-3xl mx-auto text-center p-6 mt-12">
+    <h2 class="text-3xl neon font-bold mb-4">Tentang Saya</h2>
+    <p class="opacity-80 leading-relaxed text-lg">
+      Halloo semuanya! Saya adalah Fotografer dan Developer pemula yang suka bereksperimen dengan editing, desain web, dan dunia digital. Website ini saya buat sebagai tempat untuk menyimpan galeri foto, portfolio desain, sekaligus ruang bermain untuk belajar teknologi web.
+    </p>
+  </section>
+
+  <!-- Biodata Section -->
+  <section id="biodata" class="max-w-3xl mx-auto text-center p-6 mt-10">
+    <h2 class="text-3xl neon font-bold mb-4">Biodata</h2>
+    <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg text-left">
+      <ul class="space-y-3 text-lg">
+        <li><strong class="text-indigo-400">Nama Lengkap:</strong> Sevinho Dasilva</li>
+        <li><strong class="text-indigo-400">Nama Panggilan:</strong> Vino</li>
+        <li><strong class="text-indigo-400">Tanggal Lahir:</strong> 14 Januari 2007</li>
+        <li><strong class="text-indigo-400">Alamat:</strong> Asrama Yonif 303 SSM</li>
+        <li><strong class="text-indigo-400">Hobi:</strong> Musik, Fotografi, Olahraga, Coding</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Guestbook Section -->
+  <section id="guestbook" class="max-w-3xl mx-auto p-6 mt-12">
+    <h2 class="text-3xl neon font-bold mb-5 text-center">Guestbook</h2>
+    <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg">
+      <form id="guestbook-form" class="space-y-4">
+        <input id="gb-name" type="text" placeholder="Nama" class="w-full p-3 rounded bg-black/30 border border-white/10 outline-none">
+        <textarea id="gb-message" placeholder="Pesan" rows="3" class="w-full p-3 rounded bg-black/30 border border-white/10 outline-none"></textarea>
+        <button type="submit" class="px-4 py-2 bg-indigo-600 rounded text-white font-bold w-full">Kirim Pesan</button>
+      </form>
+      <div id="guestbook-list" class="mt-6 space-y-4">
+        <!-- Pesan akan di-append dari JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="max-w-3xl mx-auto text-center p-6 mt-12 mb-16">
+    <h2 class="text-3xl neon font-bold mb-4">Kontak</h2>
+    <p class="opacity-80">Email: <a href="mailto:vinvin140107@gmail.com" class="underline text-indigo-300"> vinvin140107@gmail.com </a></p>
+    <p class="opacity-80">WhatsApp: <a href="https://wa.me/6285224943832" class="underline text-indigo-300"> 085224943832 </a></p>
+    <p class="opacity-80">Instagram: <a href="https://instagram.com/vinn.dasilva_" class="underline text-indigo-300"> @vinn.dasilva_ </a></p>
+  </section>
 
   <!-- Footer -->
-  <footer class="mt-16 p-8 text-center text-sm">
-    <p>&copy; 2025 Sevinho Dasilva. All Rights Reserved.</p>
+  <footer class="text-center py-6 opacity-50 text-sm">
+    © 2025 VinnDev • All Rights Reserved
   </footer>
 
   <!-- Lightbox Modal -->
-  <div id="lightbox" class="hidden fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-    <div id="lightbox-content" class="relative bg-white p-4 rounded-lg">
-      <span class="absolute top-0 right-0 p-2 cursor-pointer text-xl text-white" onclick="document.getElementById('lightbox').style.display='none'">&times;</span>
-      <img id="lightbox-img" src="https://via.placeholder.com/600" alt="Lightbox" />
+  <div id="lightbox">
+    <div id="lightbox-content">
+      <button class="close-lightbox">&times;</button>
+      <img id="lightbox-img" alt="Preview">
+      <div class="info">
+        <strong id="info-title"></strong>
+        <span id="info-loc"></span>
+        <p id="info-desc"></p>
+      </div>
     </div>
   </div>
 
   <script>
-    // Placeholder for functionality
-    document.getElementById("lightbox").addEventListener("click", function(e) {
-      if (e.target === this) {
-        this.style.display = 'none';
+    /* ============================ TYPE EFFECT ============================ */
+    const words = ["Fotografer.", "Editor.", "Web Developer.", "Content Creator."];
+    let i = 0, j = 0, del = false;
+    setInterval(() => {
+      const el = document.getElementById("typing");
+      if (!del) {
+        el.textContent = words[i].slice(0, ++j);
+        if (j === words[i].length) del = true;
+      } else {
+        el.textContent = words[i].slice(0, --j);
+        if (j === 0) {
+          del = false;
+          i = (i + 1) % words.length;
+        }
       }
+    }, 120);
+
+    /* ============================ COUNT-UP STATS ============================ */
+    function countUp(id, end, speed = 17) {
+      let num = 0;
+      const el = document.getElementById(id);
+      const int = setInterval(() => {
+        num++;
+        el.textContent = num;
+        if (num >= end) clearInterval(int);
+      }, speed);
+    }
+
+    window.addEventListener("load", () => {
+      countUp("count-photos", 58);
+      countUp("count-projects", 12);
+      countUp("count-followers", 2500, 1);
     });
+
+    /* ============================ LIGHTBOX BEHAVIOR ============================ */
+    const lightbox = document.getElementById("lightbox");
+    const lbImg = document.getElementById("lightbox-img");
+    const lbTitle = document.getElementById("info-title");
+    const lbLoc = document.getElementById("info-loc");
+    const lbDesc = document.getElementById("info-desc");
+
+    document.querySelectorAll(".masonry figure").forEach(fig => {
+      fig.addEventListener("click", () => {
+        lbImg.src = fig.querySelector("img").src;
+        lbTitle.textContent = fig.dataset.title;
+        lbLoc.textContent = fig.dataset.loc;
+        lbDesc.textContent = fig.dataset.desc;
+        lightbox.classList.add("active");
+      });
+    });
+
+    document.querySelector(".close-lightbox").onclick = () => lightbox.classList.remove("active");
+
+    /* ============================ GUESTBOOK (LocalStorage) ============================ */
+    const gbForm = document.getElementById("guestbook-form");
+    const gbList = document.getElementById("guestbook-list");
   </script>
 </body>
+
 </html>
