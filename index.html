@@ -1,434 +1,180 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sevinho Dasilva — VinnGallery</title>
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-
-  <!-- Swiper -->
-  <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
-  <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
-
-  <!-- Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Anniversary ❤️</title>
   <style>
-    :root {
-      --bg-dark: #030410;
-      --indigo-600: #6366f1;
-      --muted: #bfc3ff;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
-      font-family: "Poppins", sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
       margin: 0;
-      background: radial-gradient(circle at 20% 20%, #06071a, #03040d 70%);
-      color: #d5d8e9;
-      overflow-x: hidden;
-    }
-
-    #galaxy-bg {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -20;
-      pointer-events: none;
-    }
-
-    /* Loading */
-    #loading-screen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      align-items: center;
-      justify-content: center;
-      background: rgba(2, 3, 10, 0.95);
-      z-index: 99999;
-    }
-
-    .holo-ring {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 4px solid rgba(99, 102, 241, 0.12);
-      border-top: 4px solid var(--indigo-600);
-      animation: spin 1s linear infinite;
-      box-shadow: 0 0 18px rgba(99, 102, 241, 0.2);
-    }
-
-    @keyframes spin {
-      from {
-        transform: rotate(0);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Navbar */
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 60;
-      backdrop-filter: blur(6px);
-      background: linear-gradient(180deg, rgba(9, 10, 20, 0.35), rgba(9, 10, 20, 0.12));
-      border-bottom: 1px solid rgba(99, 102, 241, 0.06);
-    }
-
-    nav ul {
-      display: flex;
-      gap: 1.25rem;
-      align-items: center;
-      justify-content: center;
-      padding: 0.9rem 1rem;
-      margin: 0;
-      list-style: none;
-    }
-
-    nav a {
-      color: #cbd5ff;
-      font-weight: 600;
-      padding: 0.25rem 0.5rem;
-      border-radius: 6px;
-      text-decoration: none;
-    }
-
-    nav a:hover {
-      color: white;
-      box-shadow: 0 0 10px rgba(99, 102, 241, 0.12);
-    }
-
-    /* Header */
-    header {
-      padding-top: 88px;
+      padding: 0;
+      color: #333;
       text-align: center;
-      padding-bottom: 18px;
     }
-
-    .neon {
-      text-shadow: 0 0 10px #4f46e5, 0 0 26px #4338ca;
-      color: #e6e9ff;
+    header {
+      padding: 40px 20px;
     }
-
-    .typing::after {
-      content: "|";
-      animation: blink 0.6s infinite;
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
     }
-
-    @keyframes blink {
-      50% {
-        opacity: 0;
-      }
+    header p {
+      font-size: 1.2em;
     }
-
-    /* Masonry fix */
-    .masonry {
-      column-gap: 1rem;
-      column-count: 1;
-      padding: 1.25rem;
-      max-width: 1200px;
-      margin: 0 auto;
+    .counter {
+      background: #fff;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
-
-    @media (min-width: 640px) {
-      .masonry {
-        column-count: 2;
-      }
+    .counter h2 {
+      margin-bottom: 15px;
     }
-
-    @media (min-width: 768px) {
-      .masonry {
-        column-count: 3;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .masonry {
-        column-count: 4;
-      }
-    }
-
-    .masonry figure {
-      break-inside: avoid;
-      margin: 0 0 1rem;
-      position: relative;
-      overflow: hidden;
-      border-radius: 14px;
-    }
-
-    .masonry img {
-      width: 100%;
-      display: block;
-      border-radius: 14px;
-      transition: transform 0.35s ease, box-shadow 0.35s ease;
-      background: #0a0a10;
-    }
-
-    .masonry figure:hover img {
-      transform: scale(1.05) rotate(0.5deg);
-      box-shadow: 0 0 22px rgba(99, 102, 241, 0.18);
-    }
-
-    .caption {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      bottom: 8px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, rgba(7, 9, 20, 0.15), rgba(5, 6, 12, 0.45));
-      backdrop-filter: blur(6px);
-      color: var(--muted);
+    .time {
       display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+    .time div {
+      margin: 10px;
+      font-size: 1.2em;
+    }
+    .gallery {
+      background: #fff;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .gallery h2 {
+      margin-bottom: 20px;
+    }
+    .upload {
+      margin-bottom: 20px;
+    }
+    .photos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .photo-card {
+      background: #f8f8f8;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .photo-card img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .caption {
+      margin-top: 8px;
+      font-style: italic;
+    }
+    footer {
+      margin: 40px 0 20px;
+      font-size: 0.9em;
     }
   </style>
 </head>
-
 <body>
-  <!-- Galaxy Canvas -->
-  <canvas id="galaxy-bg"></canvas>
 
-  <!-- Loading -->
-  <div id="loading-screen">
-    <div class="holo-ring"></div>
-    <div style="color: var(--muted); letter-spacing: 3px;">LOADING...</div>
-  </div>
-
-  <!-- Navbar -->
-  <nav>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#guestbook">Guestbook</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
-
-  <!-- Header -->
-  <header class="mt-6 text-center">
-    <div class="header-wrap">
-      <div id="tilt" class="tilt">
-        <h1 class="neon text-5xl font-extrabold">Sevinho Dasilva</h1>
-        <p id="typing" class="typing text-indigo-300 mt-2 font-medium"></p>
-      </div>
-    </div>
-    <div class="stats mt-6 flex gap-6 justify-center flex-wrap">
-      <div class="stat">
-        <div id="count-photos" class="text-3xl font-bold">0</div>
-        <div class="text-xs opacity-80">Foto</div>
-      </div>
-      <div class="stat">
-        <div id="count-projects" class="text-3xl font-bold">0</div>
-        <div class="text-xs opacity-80">Projects</div>
-      </div>
-      <div class="stat">
-        <div id="count-followers" class="text-3xl font-bold">0</div>
-        <div class="text-xs opacity-80">Followers</div>
-      </div>
-    </div>
+  <header>
+    <h1>Happy Anniversary Sayang ❤️</h1>
+    <p>Terima kasih sudah menjadi bagian terindah dalam hidupku</p>
   </header>
 
-  <!-- Gallery -->
-  <section id="gallery" class="mt-6 px-3">
-    <div class="masonry">
-      <!-- FOTO 1 -->
-      <figure data-title="City Neon" data-loc="Guntur, 2025" data-desc="Low-light street photo">
-        <img loading="lazy" src="foto1.jpg" alt="City Neon" />
-        <figcaption class="caption">
-          <div class="meta">
-            <strong>Golden Hour</strong>
-            <div style="font-size:11px; opacity:0.85">Gunung Guntur</div>
-          </div>
-          <div class="actions">
-            <button class="btn-download" data-fname="foto1.jpg">↓</button>
-            <button class="btn-share">⤴</button>
-          </div>
-        </figcaption>
-      </figure>
-
-      <!-- FOTO 2 -->
-      <figure data-title="Golden Hour" data-loc="ITG, 2025" data-desc="Sunset portrait">
-        <img loading="lazy" src="foto2.jpg" alt="Golden Hour" />
-        <figcaption class="caption">
-          <div class="meta">
-            <strong>Cikajang Style</strong>
-            <div style="font-size:11px; opacity:0.85">Just Style</div>
-          </div>
-          <div class="actions">
-            <button class="btn-download" data-fname="foto2.jpg">↓</button>
-            <button class="btn-share">⤴</button>
-          </div>
-        </figcaption>
-      </figure>
-
-      <!-- FOTO 3 -->
-      <figure data-title="Mountain View" data-loc="Bandung, 2025" data-desc="Landscape with sunset">
-        <img loading="lazy" src="foto3.jpg" alt="Mountain View" />
-        <figcaption class="caption">
-          <div class="meta">
-            <strong>Mountain Sunset</strong>
-            <div style="font-size:11px; opacity:0.85">Bandung</div>
-          </div>
-          <div class="actions">
-            <button class="btn-download" data-fname="foto3.jpg">↓</button>
-            <button class="btn-share">⤴</button>
-          </div>
-        </figcaption>
-      </figure>
-
-      <!-- FOTO 4 -->
-      <figure data-title="Forest Path" data-loc="Garut, 2025" data-desc="Nature photography">
-        <img loading="lazy" src="foto4.jpg" alt="Forest Walk" />
-        <figcaption class="caption">
-          <div class="meta">
-            <strong>Forest Walk</strong>
-            <div style="font-size:11px; opacity:0.85">Garut</div>
-          </div>
-          <div class="actions">
-            <button class="btn-download" data-fname="foto4.jpg">↓</button>
-            <button class="btn-share">⤴</button>
-          </div>
-        </figcaption>
-      </figure>
-
-  <!-- About Section -->
-  <section id="about" class="max-w-3xl mx-auto text-center p-6 mt-12">
-    <h2 class="text-3xl neon font-bold mb-4">Tentang Saya</h2>
-    <p class="opacity-80 leading-relaxed text-lg">
-      Halloo semuanya! Saya adalah Fotografer dan Developer pemula yang suka bereksperimen dengan editing, desain web, dan dunia digital. Website ini saya buat sebagai tempat untuk menyimpan galeri foto, portfolio desain, sekaligus ruang bermain untuk belajar teknologi web.
-    </p>
-  </section>
-
-  <!-- Biodata Section -->
-  <section id="biodata" class="max-w-3xl mx-auto text-center p-6 mt-10">
-    <h2 class="text-3xl neon font-bold mb-4">Biodata</h2>
-    <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg text-left">
-      <ul class="space-y-3 text-lg">
-        <li><strong class="text-indigo-400">Nama Lengkap:</strong> Sevinho Dasilva</li>
-        <li><strong class="text-indigo-400">Nama Panggilan:</strong> Vino</li>
-        <li><strong class="text-indigo-400">Tanggal Lahir:</strong> 14 Januari 2007</li>
-        <li><strong class="text-indigo-400">Alamat:</strong> Asrama Yonif 303 SSM</li>
-        <li><strong class="text-indigo-400">Hobi:</strong> Musik, Fotografi, Olahraga</li>
-      </ul>
+  <section class="counter">
+    <h2>Waktu yang Telah Kita Lalui Bersama</h2>
+    <div class="time">
+      <div><strong id="years">0</strong><br/>Tahun</div>
+      <div><strong id="days">0</strong><br/>Hari</div>
+      <div><strong id="hours">0</strong><br/>Jam</div>
+      <div><strong id="minutes">0</strong><br/>Menit</div>
+      <div><strong id="seconds">0</strong><br/>Detik</div>
     </div>
   </section>
 
-  <!-- Guestbook Section -->
-  <section id="guestbook" class="max-w-3xl mx-auto p-6 mt-12">
-    <h2 class="text-3xl neon font-bold mb-5 text-center">Guestbook</h2>
-    <div class="bg-white/5 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg">
-      <form id="guestbook-form" class="space-y-4">
-        <input id="gb-name" type="text" placeholder="Nama" class="w-full p-3 rounded bg-black/30 border border-white/10 outline-none">
-        <textarea id="gb-message" placeholder="Pesan" rows="3" class="w-full p-3 rounded bg-black/30 border border-white/10 outline-none"></textarea>
-        <button type="submit" class="px-4 py-2 bg-indigo-600 rounded text-white font-bold w-full">Kirim Pesan</button>
-      </form>
-      <div id="guestbook-list" class="mt-6 space-y-4">
-        <!-- Pesan akan di-append dari JS -->
-      </div>
+  <section class="gallery">
+    <h2>Kenangan Kita 📸</h2>
+    <div class="upload">
+      <input type="file" id="photoInput" accept="image/*" />
+      <br/><br/>
+      <input type="text" id="captionInput" placeholder="Tulis caption romantis..." style="width:80%; padding:8px;" />
+      <br/><br/>
+      <button onclick="addPhoto()" style="padding:10px 20px; border:none; border-radius:10px; background:#ff6f91; color:white; font-size:1em;">Tambah Foto</button>
     </div>
+    <div class="photos" id="photos"></div>
   </section>
 
-  <!-- Contact Section -->
-  <section id="contact" class="max-w-3xl mx-auto text-center p-6 mt-12 mb-16">
-    <h2 class="text-3xl neon font-bold mb-4">Kontak</h2>
-    <p class="opacity-80">Email: <a href="mailto:vinvin140107@gmail.com" class="underline text-indigo-300"> vinvin140107@gmail.com </a></p>
-    <p class="opacity-80">WhatsApp: <a href="https://wa.me/6285224943832" class="underline text-indigo-300"> 085224943832 </a></p>
-    <p class="opacity-80">Instagram: <a href="https://instagram.com/vinn.dasilva_" class="underline text-indigo-300"> @vinn.dasilva_ </a></p>
-  </section>
-
-  <!-- Footer -->
-  <footer class="text-center py-6 opacity-50 text-sm">
-    © 2025 VinnDev • All Rights Reserved
+  <footer>
+    <p>Dibuat dengan cinta ❤️ oleh aku, hanya untuk kamu</p>
   </footer>
 
-  <!-- Lightbox Modal -->
-  <div id="lightbox">
-    <div id="lightbox-content">
-      <button class="close-lightbox">&times;</button>
-      <img id="lightbox-img" alt="Preview">
-      <div class="info">
-        <strong id="info-title"></strong>
-        <span id="info-loc"></span>
-        <p id="info-desc"></p>
-      </div>
-    </div>
-  </div>
-
   <script>
-    /* ============================ TYPE EFFECT ============================ */
-    const words = ["Fotografer.", "Editor.", "Web Developer.", "Content Creator."];
-    let i = 0, j = 0, del = false;
-    setInterval(() => {
-      const el = document.getElementById("typing");
-      if (!del) {
-        el.textContent = words[i].slice(0, ++j);
-        if (j === words[i].length) del = true;
-      } else {
-        el.textContent = words[i].slice(0, --j);
-        if (j === 0) {
-          del = false;
-          i = (i + 1) % words.length;
-        }
-      }
-    }, 120);
+    // Tanggal jadian: 26 November 2025, 08:47
+    const startDate = new Date('2025-11-26T08:47:00');
 
-    /* ============================ COUNT-UP STATS ============================ */
-    function countUp(id, end, speed = 17) {
-      let num = 0;
-      const el = document.getElementById(id);
-      const int = setInterval(() => {
-        num++;
-        el.textContent = num;
-        if (num >= end) clearInterval(int);
-      }, speed);
+    function updateCounter() {
+      const now = new Date();
+      let diff = now - startDate;
+
+      if (diff < 0) diff = 0;
+
+      const seconds = Math.floor(diff / 1000) % 60;
+      const minutes = Math.floor(diff / (1000 * 60)) % 60;
+      const hours = Math.floor(diff / (1000 * 60 * 60)) % 24;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24)) % 365;
+      const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+
+      document.getElementById('years').innerText = years;
+      document.getElementById('days').innerText = days;
+      document.getElementById('hours').innerText = hours;
+      document.getElementById('minutes').innerText = minutes;
+      document.getElementById('seconds').innerText = seconds;
     }
 
-    window.addEventListener("load", () => {
-      countUp("count-photos", 58);
-      countUp("count-projects", 12);
-      countUp("count-followers", 2500, 1);
+    setInterval(updateCounter, 1000);
+    updateCounter();
 
-      // Hide the loading screen after the page has loaded
-      const loadingScreen = document.getElementById('loading-screen');
-      loadingScreen.style.display = 'none';
-    });
+    function addPhoto() {
+      const fileInput = document.getElementById('photoInput');
+      const captionInput = document.getElementById('captionInput');
+      const photosDiv = document.getElementById('photos');
 
-    /* ============================ LIGHTBOX BEHAVIOR ============================ */
-    const lightbox = document.getElementById("lightbox");
-    const lbImg = document.getElementById("lightbox-img");
-    const lbTitle = document.getElementById("info-title");
-    const lbLoc = document.getElementById("info-loc");
-    const lbDesc = document.getElementById("info-desc");
+      if (!fileInput.files[0]) {
+        alert('Pilih foto terlebih dahulu');
+        return;
+      }
 
-    document.querySelectorAll(".masonry figure").forEach(fig => {
-      fig.addEventListener("click", () => {
-        lbImg.src = fig.querySelector("img").src;
-        lbTitle.textContent = fig.dataset.title;
-        lbLoc.textContent = fig.dataset.loc;
-        lbDesc.textContent = fig.dataset.desc;
-        lightbox.classList.add("active");
-      });
-    });
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
 
-    document.querySelector(".close-lightbox").onclick = () => lightbox.classList.remove("active");
+        const img = document.createElement('img');
+        img.src = e.target.result;
+
+        const caption = document.createElement('div');
+        caption.className = 'caption';
+        caption.innerText = captionInput.value || 'Kenangan indah kita ❤️';
+
+        card.appendChild(img);
+        card.appendChild(caption);
+        photosDiv.appendChild(card);
+      }
+      reader.readAsDataURL(fileInput.files[0]);
+
+      fileInput.value = '';
+      captionInput.value = '';
+    }
   </script>
-</body>
 
+</body>
 </html>
