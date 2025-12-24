@@ -262,6 +262,18 @@
       transform: translateY(0);
     }
 
+      /* SCROLL FADE ANIMATION */
+    .fade-section {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .fade-section.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
   </style>
 </head>
 <body>
@@ -274,7 +286,7 @@
   </p>
 </header>
 
-<section class="counter">
+<section class="counter fade-section">
   <h2>Waktu yang Telah Kita Jalani Bersama</h2>
   <div class="time">
     <div><strong id="years">0</strong>Tahun</div>
@@ -285,7 +297,7 @@
   </div>
 </section>
 
-<section class="gallery">
+<section class="gallery fade-section">
   <h2>Kenangan Kita 📸</h2>
   <div class="photos">
 
@@ -302,13 +314,13 @@
 
     <div class="photo-card">
       <img src="foto3.jpg" alt="Kenangan 3">
-      <div class="caption">Semoga selamanya, kamu tetap di sisiku 💕</div>
+      <div class="caption">Aku Sayang Banget REsti 💕</div>
     </div>
 
   </div>
 </section>
 
-<section class="love-letter">
+<section class="love-letter fade-section">
   <div class="envelope" id="envelope" onclick="openLetter()">
     <div class="envelope-front">💌<br/>Buka Surat Untukmu</div>
     <div class="envelope-flap"></div>
@@ -328,16 +340,31 @@
       <br/><br/>
       Dengan seluruh rasa yang aku punya,
       <br/>
-      Aku ❤️
+      Pacarmu yang ganteng se alam dunia❤️
     </p>
   </div>
 </section>
 
 <footer>
-  <p>Dibuat dengan sepenuh hati ❤️ hanya untuk kamu</p>
+  <p>Dibuat dengan sepenuh hati ❤️ hanya untuk kamu Resti Tersayang</p>
 </footer>
 
 <script>
+  // Smooth scroll & mobile performance optimization
+  document.documentElement.style.scrollBehavior = 'smooth';
+
+  // Fade in on scroll
+  const fadeSections = document.querySelectorAll('.fade-section');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  fadeSections.forEach(section => observer.observe(section));
   // Smooth scroll & mobile performance optimization
   document.documentElement.style.scrollBehavior = 'smooth';
   // Tanggal jadian: 26 November 2025, 08:47
